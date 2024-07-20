@@ -3,7 +3,7 @@ Application definition for the supermarket
 """
 import reflex as rx
 # Import the pages
-from supermarket_front.pages import index
+from supermarket_front.pages import index, PROJECT_PAGES
 
 # ========================================== #
 #                    APP                     #
@@ -31,3 +31,5 @@ app.add_page(
     route="/",
     description="Introduction to the supermarket problem view."
 )
+for page in PROJECT_PAGES:
+    app.add_page(page, **page.__metadata__)
