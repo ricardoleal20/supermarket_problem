@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "supermarket-problem"
+version = "0.1.0"
+description = "Solve a SuperMarket allocation problem using a MIL solver"
+authors = ["ricardoleal20 <rick.leal420@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.13"
+pymath_compute = { develop = true, path = "/Users/ricardoleal20/Documents/Github/pymath_compute" }
+
+[tool.poetry.dev-dependencies]
+reflex = "~=0.5.7"
+pylint = "~=3.2.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
