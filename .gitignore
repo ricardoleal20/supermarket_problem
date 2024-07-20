@@ -134,3 +134,5 @@ var/
 venv.bak/
 venv/
 wheels/
+.vscode/
+.DS_STORE
