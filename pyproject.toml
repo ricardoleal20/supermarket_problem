@@ -9,6 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
 pymath_compute = { develop = true, path = "/Users/ricardoleal20/Documents/Github/pymath_compute" }
+pydash = "~=8.0.1"
 
 [tool.poetry.dev-dependencies]
 reflex = "~=0.5.7"
