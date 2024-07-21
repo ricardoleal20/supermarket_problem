@@ -333,7 +333,7 @@ def sidebar_item(
         ),
         href=url,
         width="100%",
-        underline="hover"
+        underline="none"
     )
 
 

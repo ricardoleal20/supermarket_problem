@@ -22,7 +22,7 @@ app = rx.App(  # pylint: disable=E1102
     style={
         "font_family": "Montserrat, sans-serif",
         "font_size": "13px",
-        "background": rx.color("gray", shade=5)
+        "background": rx.color("black", shade=5)
     }
 )
 # Add the pages
