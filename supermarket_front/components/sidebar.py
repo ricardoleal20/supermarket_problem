@@ -333,7 +333,7 @@ def sidebar_item(
         ),
         href=url,
         width="100%",
-        underline="none"
+        underline="hover"
     )
 
 
@@ -404,6 +404,7 @@ def sidebar_grouper(
 def sidebar_section(  # pylint: disable=R0913
     page_title: str,
     route: str,
+    *,
     sidebar_title: Optional[str] = None,
     sidebar_icon: Optional[str] = None,
     description: Optional[str] = None,
@@ -435,9 +436,15 @@ def sidebar_section(  # pylint: disable=R0913
                 sidebar(route),
                 rx.box(
                     rx.vstack(
-                        page_cont()
-                    )
+                        page_cont(),
+                        width="100%",
+                        height="100%",
+                    ),
+                    width="100%",
+                    height="100%"
                 ),
+                width="100%",
+                height="100%",
                 align="start",
                 position="relative",
             )

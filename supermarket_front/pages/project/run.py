@@ -40,7 +40,8 @@ from supermarket_front.components import sidebar_section
     page_title="Solution :: SuperMarket",
     route="/project/solution",
     sidebar_title="Solution",
-    sidebar_icon="cpu"
+    sidebar_icon="cpu",
+    index_position=2,
 )
 def run() -> rx.Component:
     """Run the problem using the data provided."""
