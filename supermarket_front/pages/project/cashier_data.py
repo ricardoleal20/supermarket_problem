@@ -18,11 +18,13 @@ The morning time is:
 The afternoon time is:
     - From 2 pm to 8 pm
 """
+from typing import Any
+import asyncio
 import reflex as rx
 # Local imports
-from supermarket_front.components import (
-    sidebar_section, DataTable, DataTableCol
-)
+from supermarket_front.components import sidebar_section
+from supermarket_front.components.datatable import DataTable, DataTableCol, TableState
+
 
 
 COLUMNS: list[DataTableCol] = [
@@ -50,14 +52,28 @@ COLUMNS: list[DataTableCol] = [
     ),
     # Add the rates
     DataTableCol(
-        title="Solution Avg Rate",
-        type="float",
-        description="",
+        title="Effectiveness average",
+        type="percentage",
+        description="How efficient it is in average",
         # width=300,
-        icon="sunset"
+        icon="percent"
     ),
 ]
 
+
+async def get_data(*_args, **_kwargs) -> list[dict[str, Any]]:
+    """Get the data for the DataTable"""
+    await asyncio.sleep(2)
+    # Then, return the data
+    import random  # pylint: disable=C0415
+    return [
+        {
+            "name": f"Cashier {i}",
+            "available_in_the_morning": True,
+            "available_in_the_afternoon": False,
+            "effectiveness_average": round(random.random()*100, 3)
+        } for i in range(0, 100)
+    ]
 
 @sidebar_section(
     page_title="Cashier's :: SuperMarket",
@@ -68,23 +84,26 @@ COLUMNS: list[DataTableCol] = [
 )
 def cashier_data() -> rx.Component:
     """Create and return the DataTable for the cashier data"""
+    # Create the state
+    state = TableState.unique(method=get_data)
     # Init the table
-    table = DataTable()
+    table = DataTable(state)
     table.add_cols(COLUMNS)
 
     # Add the data
+    #! STATE
     import random  # pylint: disable=C0415
     table.add_data([{
         "name": f"Cashier {i}",
         "available_in_the_morning": True,
         "available_in_the_afternoon": False,
-        "solution_avg_rate": round(random.random(), 3)
-    } for i in range(0, 3)])
+        "effectiveness_average": round(random.random()*100, 3)
+    } for i in range(0, 100)])
 
     # Convert this table to editable
     table.is_editable = True
 
-    # Return the box
+    # Return the box with the table component
     return rx.box(
         rx.heading(
             "Cashier info", as_="h1",

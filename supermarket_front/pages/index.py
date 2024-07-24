@@ -107,7 +107,7 @@ def __button() -> rx.Component:
                     background_color="transparent",
                     cursor="pointer",
                 ),
-                href="/project/data"
+                href="/project/cashier_data"
             )
         ),
         width="100%",
