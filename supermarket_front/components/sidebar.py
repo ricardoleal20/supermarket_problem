@@ -26,7 +26,8 @@ def sidebar(route: str) -> rx.Component:
             __sidebar_desktop_view(route),
         ),
         rx.mobile_and_tablet(
-            __sidebar_mobile_and_tablet_view(route)
+            __sidebar_mobile_and_tablet_view(route),
+            margin_bottom="1em"
         ),
         # display=["none", "none", "block"],
         position="sticky",
@@ -109,90 +110,87 @@ def __sidebar_desktop_view(route: str) -> rx.Component:
 def __sidebar_mobile_and_tablet_view(route: str) -> rx.Component:
     """Desktop view of the Sidebar"""
     sorted_stacks = __sort_stacks(route)
-    return rx.vstack(
-        rx.drawer.root(
-            rx.hstack(
-                # Add the button to display the drawer
-                rx.drawer.trigger(
-                    rx.button(
-                        rx.icon(
-                            "menu",
-                            size=50
+    return rx.box(
+        rx.vstack(
+            rx.drawer.root(
+                rx.hstack(
+                    # Add the button to display the drawer
+                    rx.drawer.trigger(
+                        rx.button(
+                            rx.icon(
+                                "menu",
+                                size=50,
+                                padding_top="1.2em"
+                            ),
+                            justify="start",
+                            color=styles.Color.TEXT_SECONDARY.value,
                         ),
+                        background=styles.Color.BACKGROUND.value,
                     ),
+                    rx.spacer(),
                     position="fixed",
-                    color=styles.Color.TEXT_SECONDARY.value,
+                    width="100%",
+                    height="4em",
                     background=styles.Color.BACKGROUND.value,
-                    margin_right="1em",
-                    margin_top="1em",
+                    border_bottom=styles.BORDER,
                 ),
-                # position="fixed",
-                # justify="end",
-            ),
-            rx.drawer.overlay(z_index="-1"),
-            # Add the portal to open in this situation.
-            rx.drawer.portal(
-                # Add the content
-                rx.drawer.content(
-                    rx.vstack(
-                        # Add the button to close
-                        rx.spacer(),
-                        rx.hstack(
-                            rx.flex(
-                                rx.drawer.close(
-                                    rx.button(
-                                        rx.icon(
-                                            "x",
-                                            size=50
-                                        ),
-                                    ),
-                                    color=styles.Color.TEXT_SECONDARY.value,
-                                    background="transparent",
-                                    # justify="end",
-                                    # right="0"
-                                ),
-                                # display="fixed",
-                                # flex_direction="column",
-                                # float="right",
-                                # right="0",
-                                justify="end",
-                                # align="right",
-                                width="100%"
-                            ),
-                            position="fixed",
-                            top="2.5em",
-                            width="100%",
-                            padding="1em",
-                            # display="flex",
-                            # flex_direction="column",
-                            # right=0,
-                            # justify="end"
-                        ),
+                rx.drawer.overlay(z_index="999"),
+                # Add the portal to open in this situation.
+                rx.drawer.portal(
+                    # Add the content
+                    rx.drawer.content(
                         rx.vstack(
-                            # Add the sidebar
-                            sidebar_header(),
-                            rx.vstack(
-                                *sorted_stacks,
-                                width="100%",
-                                align_items="flex-start",
-                                padding="1em",
-                            ),
                             rx.spacer(),
-                            sidebar_footer(),
+                            rx.vstack(
+                                # Add the sidebar
+                                rx.hstack(
+                                    sidebar_header(include_border=False),
+                                    # Add the button to close
+                                    rx.flex(
+                                        rx.drawer.close(
+                                            rx.button(
+                                                rx.icon(
+                                                    "x",
+                                                    size=50
+                                                ),
+                                            ),
+                                            color=styles.Color.TEXT_SECONDARY.value,
+                                            background="transparent",
+                                        ),
+                                        justify="end",
+                                        align="center",
+                                        right="0",
+                                        width="100%",
+                                        height="100%",
+                                    ),
+                                    width="100%",
+                                    border_bottom=styles.BORDER
+                                ),
+                                rx.vstack(
+                                    *sorted_stacks,
+                                    width="100%",
+                                    align_items="flex-start",
+                                    padding="1em",
+                                ),
+                                rx.spacer(),
+                                sidebar_footer(),
+                                background_color=styles.Color.BACKGROUND,
+                                width="100%",
+                                height="100%"
+                            ),
                             background_color=styles.Color.BACKGROUND,
-                            width="100%",
-                            height="100%"
+                            right="auto",
+                            width="30em"
                         ),
-                        background_color=styles.Color.BACKGROUND,
-                        right="auto",
-                        width="30em"
-                    ),
-                )
+                    )
+                ),
+                direction="left",
             ),
-            direction="left",
-        ),
-        width="100%",
-        min_width="0%"
+            width="100%",
+            min_width="0%",
+            top="0px",
+            background_color=styles.Color.BACKGROUND
+        )
     )
 
 # =============================================== #
@@ -200,7 +198,9 @@ def __sidebar_mobile_and_tablet_view(route: str) -> rx.Component:
 # =============================================== #
 
 
-def sidebar_header() -> rx.Component:
+def sidebar_header(
+    include_border: bool = True
+) -> rx.Component:
     """Sidebar header.
 
     Returns:
@@ -233,7 +233,11 @@ def sidebar_header() -> rx.Component:
         ),
         align="center",
         width="100%",
-        border_bottom=styles.BORDER,
+        border_bottom=rx.cond(
+            include_border,
+            styles.BORDER,
+            ""
+        ),
         padding_x="1em",
         padding_y="2em",
     )
@@ -435,18 +439,17 @@ def sidebar_section(  # pylint: disable=R0913
             return rx.hstack(
                 sidebar(route),
                 rx.box(
+                    rx.mobile_and_tablet(
+                        margin_top="3em"
+                    ),
                     rx.vstack(
                         page_cont(),
-                        width="100%",
-                        height="100%",
                     ),
                     width="100%",
                     height="100%"
                 ),
-                width="100%",
-                height="100%",
                 align="start",
-                position="relative",
+                # position="relative",
             )
 
         sidebar_page.__doc__ = page_cont.__doc__
