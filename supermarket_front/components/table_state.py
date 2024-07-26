@@ -1,56 +1,65 @@
 """
 Create the TableState for the data table
 """
-from reflex import State
-from typing import Any, Callable, Coroutine
+# Reflex imports
+import reflex as rx
+
 
 
 async def _dummy_get_data():
     return [{"id": 1, "name": "Example", "age": 30}]  # Ejemplo de datos
 
 
-class TableState(State):
+class TableState(rx.State):  # pylint: disable=E0239, R0902
     """State for the DataTable"""
+    #! BackEnd Vars
+    _full_data: list[dict[str, int | float | str | bool]] = []
+    _n_items: int = 0
+    _limit: int = 5
+    _offset: int = 0
 
-    # Constructor para inicializar atributos de instancia
-    def __init__(self):
-        self._full_data = []
-        self._n_items = 0
-        self._offset = 0
-        self._limit = 7
-        self.have_next = False
-        self.have_prev = False
-        self.loading = True
-        self.page_number = 0
-        self.total_pages = 0
+    #! FrontEnd Vars
+    have_prev: bool = False
+    have_next: bool = False
+    loading: bool = True
+    page_number: int = 0
+    total_pages: int = 0
+    data: list[dict[str, int | float | str | bool]] = []
 
-    # Método para obtener datos
-    async def fetch_data(self):
+    # Method to change the page
+    async def _back_load_entries(self):
+        """Load the entries"""
+        if not self._full_data:
+            await self._fetch_data()
+        # Update the page number
+        await self._perform_query()
+        self.data = self._full_data[self._offset:self._offset + self._limit]
+
+    async def prev_page(self) -> None:
+        """Move the data to the previous page"""
+        self._offset = max(self._offset - self._limit, 0)
+        await self.load_entries()
+
+    async def next_page(self) -> None:
+        """Move the data to the next page"""
+        if self._offset + self._limit < self._n_items:
+            self._offset += self._limit
+        await self.load_entries()
+
+    async def _perform_query(self):
+        self.__page_number()
+
+    async def _fetch_data(self):
+        # Start the loading mode...
         self.loading = True
-        self._full_data = await self._query_method()
+        self._full_data = await self.query_method()
+        # Once you've got all the full data, perform minor changes
         self._n_items = len(self._full_data)
         self.loading = False
         self.__total_pages()
+        # End waiting for the load entries
         await self.load_entries()
 
-    # Propiedad para obtener los datos paginados
-    @property
-    def data(self):
-        return self._full_data[self._offset:self._offset + self._limit]
-
-    # Método para cambiar de página
-    async def load_entries(self):
-        await self._perform_query(self._query_method)
-
-    async def _perform_query(self, query_method: Callable):
-        if not self._full_data:
-            await self._fetch_data(query_method)
-        self.__page_number()
-
-    async def _fetch_data(self, query_method: Callable):
-        if query_method is not None:
-            self._full_data = await query_method()
-        self._n_items = len(self._full_data)
 
     # Cálculo de la página actual
     def __page_number(self):
@@ -63,7 +72,7 @@ class TableState(State):
             self.have_prev = False
             self.have_next = False
 
-    # Cálculo del total de páginas
+    # Get the total pages
     def __total_pages(self):
         self.total_pages = (self._n_items // self._limit) + \
             (1 if self._n_items % self._limit else 0)

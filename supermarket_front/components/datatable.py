@@ -3,13 +3,13 @@ Include a DataTable component with custom data
 """
 from typing import (
     Any, Optional, TypeVar, Callable,
-    Literal, Coroutine
+    Literal
 )
-from copy import copy
 # External imports
 from dataclasses import dataclass
 import reflex as rx
-import pydash as _py
+# Local imports
+from supermarket_front.components.table_state import TableState
 
 T = TypeVar('T')
 
@@ -76,27 +76,18 @@ class DataTable:
     _cols: list[DataTableCol]
     _data: list[dict[str, Any]]
     _data_value_type: Any
-    _state: type["TableState"]
+    _state: type[TableState]
     _editable: bool
     # Slots
     __slots__ = ["_cols", "_data", "_data_value_type", "_state", "_editable"]
 
-    def __init__(self, state: Optional[type["TableState"]]) -> None:
+    def __init__(self, state: type[TableState]) -> None:
         # Init the params
         self._cols = []
         self._data = []
         self._editable = False
         # Set the state
-        if state is None:
-            # Define an unique state here
-            self._state = TableState
-        else:
-            # if getattr(state, "__unique__") is False:
-            #     raise RuntimeError(
-            #         "The state should be unique. Make sure to " +
-            #         "run the `TableState.unique()` and to use the given instance from it."
-            #     )
-            self._state = state
+        self._state = state
 
 
     def add_cols(self, columns: list[DataTableCol] | DataTableCol) -> None:
@@ -154,10 +145,6 @@ class DataTable:
         if self._editable is True:
             init_flex.append(self.__edit_data({}, "add"))
         init_flex.append(rx.spacer())
-
-        print(f"ID of the instance: {id(self)}")
-        print("Name of the state:", self._state.__name__)
-        print("Name of the query method:", self._state._query_method.__name__)
 
         # Return the component at the end
         return rx.fragment(
@@ -431,156 +418,6 @@ class DataTable:
                 border_radius="25px",
             ),
         )
-
-# ================= #
-#    TableState     #
-# ================= #
-
-
-async def _dummy_get_data(*_args, **_kwargs) -> list[dict[str, Any]]:
-    """Dummy function to use as default in the TableState"""
-    return []
-
-
-class TableState(rx.State):  # pylint: disable=E0239, R0902
-    """State for the DataTable"""
-    # Set the data
-    _full_data: list[dict[str, Any]] = []
-    data: list[dict[str, str | float | int]] = []
-    _n_items: int = 0
-    # Define the limits for the data
-    _offset: int = 0
-    _limit: int = 7
-    # Define params for the Pages
-    have_next: bool = False
-    have_prev: bool = False
-    # Define a parameter to know if you're loading something or not
-    loading: bool = True
-    _query_method: Callable[
-        [],
-        Coroutine[Any, Any, list[dict[str, Any]]]
-    ] = _dummy_get_data
-    # Define the parameters for the pages
-    page_number: int = 0
-    total_pages: int = 0
-
-    # //////////////////// #
-    #      PROPERTIES      #
-    # //////////////////// #
-
-    @property
-    def limit(self) -> int:
-        """Return the limit for the TableState"""
-        return self._limit
-
-    # //////////////////// #
-    #       SETTERS        #
-    # //////////////////// #
-
-    @limit.setter
-    def limit(self, new_limit: int) -> None:
-        """Set the limit for the TableState"""
-        self._limit = new_limit
-
-    # //////////////////// #
-    #       METHODS        #
-    # //////////////////// #
-
-    async def prev_page(self) -> None:
-        """Move the data to the previous page"""
-        self._offset = max(self._offset - self.limit, 0)
-        await self.load_entries()
-
-    async def next_page(self) -> None:
-        """Move the data to the next page"""
-        if self._offset + self.limit < self._n_items:
-            self._offset += self.limit
-        await self.load_entries()
-
-    def __page_number(self) -> None:
-        """Get the page number"""
-        if self._n_items:
-            new_page_number = (
-                (self._offset // self._limit)
-                + 1
-                + (1 if self._offset % self._limit else 0)
-            )
-            # If there's no total pages...
-            if self.total_pages <= 0:  # pylint: disable=W0143
-                self.have_next = False
-                self.have_prev = False
-            # If only the new page number is on the limit of the total pages...
-            elif new_page_number >= self.total_pages:  # pylint: disable=W0143
-                self.have_next = False
-                self.have_prev = True
-            # If the page number is on the lower limit, then there's no prev but there's
-            # next
-            elif new_page_number <= 1:
-                self.have_next = True
-                self.have_prev = False
-            # Then, if we have more time, we have both sides available!
-            else:
-                self.have_next = True
-                self.have_prev = True
-
-            # Update the page number
-            self.page_number = (
-                (self._offset // self._limit)
-                + 1
-                + (1 if self._offset % self._limit else 0)
-            )
-        else:
-            # If there are no elements...
-            self.have_prev = False
-            self.have_next = False
-            self.page_number = 0
-
-    def __total_pages(self) -> None:
-        """Get the total number of variables"""
-        # Get the total pages
-        self.total_pages = self._n_items // self._limit + (
-            1 if self._n_items % self._limit else 0
-        )
-
-    # ================= #
-    #    Data methods   #
-    # ================= #
-
-    async def load_entries(self) -> None:
-        """..."""
-        await self._perform_query(_dummy_get_data)
-
-    async def _perform_query(self, query_method: Callable) -> None:
-        """Load the entries taking in count the current offset and limit"""
-
-        print(
-            f"Method {type(self).__name__} has method {query_method.__name__}"
-        )
-
-        # ensure to have the data first
-        if not self._full_data:
-            await self._fetch_data(query_method)
-        # Get only the data to show from the full data
-        self._data = self._full_data[self._offset:self._offset + self._limit]
-        # Update the current page
-        self.__page_number()
-
-    async def _fetch_data(self, query_method: Callable) -> None:
-        """Fetch data using the query method"""
-        # First, set the status loading to true
-        self.loading = True
-        # Then, await for the method
-        if query_method is not None:
-            if self._full_data:
-                self._full_data += await query_method()
-            else:
-                self._full_data = await query_method()  # type: ignore
-        # Then, set the loading to False
-        self.loading = False
-        # Update the N elements that we have
-        self._n_items = len(self._full_data)
-        # Get the total pages
-        self.__total_pages()
 
 # ================= #
 #   Extra methods   #
