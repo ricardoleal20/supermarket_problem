@@ -415,7 +415,8 @@ def sidebar_section(  # pylint: disable=R0913
     meta: Optional[list[str]] = None,
     group: Optional[str] = None,
     group_icon: Optional[str] = None,
-    index_position: Optional[int] = None
+    index_position: Optional[int] = None,
+    on_load: Optional[Callable] = None
 ) -> Callable[..., Callable[..., rx.Component]]:
     """@sidebar_section decorator.
     
@@ -461,6 +462,8 @@ def sidebar_section(  # pylint: disable=R0913
             "description": description,
             "meta": meta if meta else [],
         }
+        if on_load is not None:
+            sidebar_page.__metadata__["on_load"] = on_load
         sidebar_page.__sb_section__ = True
 
         # Based on the count, get the position of this element on the sidebar
@@ -473,7 +476,7 @@ def sidebar_section(  # pylint: disable=R0913
             "route": route,
             "sidebar_icon": sidebar_icon,
             "group": group,
-            "group_icon": group_icon
+            "group_icon": group_icon,
         }
         return sidebar_page
     # Return the wrapper

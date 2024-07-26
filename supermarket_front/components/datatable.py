@@ -91,11 +91,11 @@ class DataTable:
             # Define an unique state here
             self._state = TableState
         else:
-            if getattr(state, "__unique__") is False:
-                raise RuntimeError(
-                    "The state should be unique. Make sure to " +
-                    "run the `TableState.unique()` and to use the given instance from it."
-                )
+            # if getattr(state, "__unique__") is False:
+            #     raise RuntimeError(
+            #         "The state should be unique. Make sure to " +
+            #         "run the `TableState.unique()` and to use the given instance from it."
+            #     )
             self._state = state
 
 
@@ -155,13 +155,9 @@ class DataTable:
             init_flex.append(self.__edit_data({}, "add"))
         init_flex.append(rx.spacer())
 
-        # # Create the partial data method
-        # custom_show_data = partial(
-        #     _show_data,
-        #     columns=self._cols,
-        #     is_editable=self._editable,
-        #     edit_data_method=self.__edit_data
-        # )
+        print(f"ID of the instance: {id(self)}")
+        print("Name of the state:", self._state.__name__)
+        print("Name of the query method:", self._state._query_method.__name__)
 
         # Return the component at the end
         return rx.fragment(
@@ -303,6 +299,7 @@ class DataTable:
                             size="2",
                             variant="solid",
                             color_scheme="red",
+                            cursor="pointer"
                         ),
                     )
                 )
@@ -340,6 +337,7 @@ class DataTable:
                     color_scheme="green",
                     size="2",
                     variant="solid",
+                    cursor="pointer",
                     # on_click=lambda: State.get_user(user),
                 ),
             )
@@ -350,7 +348,8 @@ class DataTable:
                     rx.text("Add entry", size="4", display=[
                         "none", "none", "block"]),
                     size="3",
-                    color_scheme="green"
+                    color_scheme="green",
+                    cursor="pointer"
                 ),
             )
         return rx.dialog.root(
@@ -548,55 +547,40 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
     # ================= #
 
     async def load_entries(self) -> None:
+        """..."""
+        await self._perform_query(_dummy_get_data)
+
+    async def _perform_query(self, query_method: Callable) -> None:
         """Load the entries taking in count the current offset and limit"""
+
+        print(
+            f"Method {type(self).__name__} has method {query_method.__name__}"
+        )
+
         # ensure to have the data first
         if not self._full_data:
-            await self.__fetch_data()
-        # Then, using a session, obtain the data for this page
-        with rx.session() as _session:
-            # Get only the data to show from the full data
-            self.data = self._full_data[self._offset:self._offset + self._limit]
+            await self._fetch_data(query_method)
+        # Get only the data to show from the full data
+        self._data = self._full_data[self._offset:self._offset + self._limit]
         # Update the current page
         self.__page_number()
 
-    async def __fetch_data(self) -> None:
+    async def _fetch_data(self, query_method: Callable) -> None:
         """Fetch data using the query method"""
         # First, set the status loading to true
         self.loading = True
         # Then, await for the method
-        if self._query_method is not None:
+        if query_method is not None:
             if self._full_data:
-                self._full_data += await self._query_method()
+                self._full_data += await query_method()
             else:
-                self._full_data = await self._query_method()  # type: ignore
+                self._full_data = await query_method()  # type: ignore
         # Then, set the loading to False
         self.loading = False
         # Update the N elements that we have
         self._n_items = len(self._full_data)
         # Get the total pages
         self.__total_pages()
-
-    # ================= #
-    #   Unique method   #
-    # ================= #
-
-    @classmethod
-    def unique(
-        cls: type["TableState"],
-        method: Optional[Callable[[],
-                                  Coroutine[Any, Any, list[dict[str, Any]]]]] = None
-    ) -> type["TableState"]:
-        """Create an unique instance of the TableState"""
-        if cls._full_data:
-            raise RuntimeError(
-                "We cannot create an unique instance from this TableState, since " +
-                "it already has information."
-            )
-        new_instance = copy(cls)
-        setattr(new_instance, "__unique__", True)
-        if method is not None:
-            setattr(new_instance, "_query_method", method)
-        return new_instance
 
 # ================= #
 #   Extra methods   #

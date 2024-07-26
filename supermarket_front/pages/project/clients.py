@@ -1,24 +1,16 @@
 """
-Cashier Data page.
+Page that includes the buyers to appear.
 
-Include a DataTable for the cashier with available options to modify.
+The list would include a button on the top-right side of the page,
+that would allow us to create the set of customers.
 
-This would allow us to include:
+Also, we'll include three options at the top-left side, being those options:
 
-1. Add an extra Cashier
-2. Modify the following parameters from existing cashiers:
-    - name: Cashier Name
-    - available_morning: Available to work in the morning
-    - service_rate_morning: Service rate for the morning
-    - available_afternoon: Available to work in the afternoon
-    - service_rate_afternoon: Service rate for the afternoon
-
-The morning time is:
-    - From 8 am to 2 pm
-The afternoon time is:
-    - From 2 pm to 8 pm
+- Quiet day: Build not so much customers
+- Middle day: Build normal customers for the day
+- Overcharged day: Make the day heavy and almost without rest for the cashiers
 """
-from typing import Any
+from typing import Any, Callable, Optional, Coroutine
 import time
 import asyncio
 import reflex as rx
@@ -26,72 +18,44 @@ import reflex as rx
 from supermarket_front.components import sidebar_section
 from supermarket_front.components.datatable import DataTable, DataTableCol, TableState
 
-
-
 COLUMNS: list[DataTableCol] = [
     DataTableCol(
-        title="Name",
-        type="str",
-        description="Cashier unique identifier",
-        icon="fingerprint"
-    ),
-    DataTableCol(
-        title="Available in the morning",
-        type="bool",
-        description="Can be in the morning shift",
-        # width=300,
-        group="Availability",
-        icon="sunrise"
-    ),
-    DataTableCol(
-        title="Available in the afternoon",
-        type="bool",
-        description="Can be in the afternoon shift",
-        # width=300,
-        group="Availability",
-        icon="sunset"
-    ),
-    # Add the rates
-    DataTableCol(
-        title="Effectiveness average",
-        type="percentage",
-        description="How efficient it is in average",
-        # width=300,
-        icon="percent"
-    ),
+        title="Qty of Items",
+        type="int",
+        description="How many items is going to buy",
+        icon="shopping-bag"
+    )
 ]
 
 
-def get_cashier_data(*_args, **_kwargs) -> list[dict[str, Any]]:
+def get_client_data(*_args, **_kwargs) -> list[dict[str, Any]]:
     """Get the data for the DataTable"""
     time.sleep(2)
     # Then, return the data
     import random  # pylint: disable=C0415
     return [
         {
-            "name": f"Cashier {i}",
-            "available_in_the_morning": True,
-            "available_in_the_afternoon": False,
-            "effectiveness_average": round(random.random()*100, 3)
-        } for i in range(0, 100)
+            "qty_of_items": random.randint(0, 50)
+        } for _ in range(0, 100)
     ]
 
 
-class CashierState(TableState):
+class ClientState(TableState):
     """State for the cashiers"""
-    _query_method = get_cashier_data
+    _query_method = get_client_data
     __unique__: bool = True
 
     def load_entries(self) -> None:
         """..."""
-        self._perform_query(get_cashier_data)
+        self._perform_query(get_client_data)
 
     # @rx.var
     # def data(self) -> list[dict[str, int | float | str | bool]]:
     #     """..."""
     #     return self._data
 
-# class CashierState(rx.State):  # pylint: disable=E0239, R0902
+
+# class ClientState(rx.State):  # pylint: disable=E0239, R0902
 #     """State for the DataTable"""
 #     # Set the data
 #     data: list[dict[str, str | float | int]] = []
@@ -108,7 +72,7 @@ class CashierState(TableState):
 #     _query_method: Callable[
 #         [],
 #         Coroutine[Any, Any, list[dict[str, Any]]]
-#     ] = get_cashier_data
+#     ] = get_client_data
 #     # Define the parameters for the pages
 #     page_number: int = 0
 #     total_pages: int = 0
@@ -197,7 +161,7 @@ class CashierState(TableState):
 
 #     async def load_entries(self) -> None:
 #         """..."""
-#         await self._perform_query(get_cashier_data)
+#         await self._perform_query(get_client_data)
 
 #     async def _perform_query(self, query_method: Callable) -> None:
 #         """Load the entries taking in count the current offset and limit"""
@@ -210,7 +174,9 @@ class CashierState(TableState):
 #         if not self._full_data:
 #             await self._fetch_data(query_method)
 #         # Then, using a session, obtain the data for this page
-#         self.data = self._full_data[self._offset:self._offset + self._limit]
+#         with rx.session() as _session:
+#             # Get only the data to show from the full data
+#             self.data = self._full_data[self._offset:self._offset + self._limit]
 #         # Update the current page
 #         self.__page_number()
 
@@ -237,10 +203,10 @@ class CashierState(TableState):
 
 #     @classmethod
 #     def set_query_method(
-#         cls: type["CashierState"],
+#         cls: type["ClientState"],
 #         method: Optional[Callable[[],
 #                                   Coroutine[Any, Any, list[dict[str, Any]]]]] = None
-#     ) -> type["CashierState"]:
+#     ) -> type["ClientState"]:
 #         """Create an unique instance of the TableState"""
 #         if cls._full_data:
 #             raise RuntimeError(
@@ -253,40 +219,24 @@ class CashierState(TableState):
 
 
 @sidebar_section(
-    page_title="Cashier's :: SuperMarket",
-    route="/project/cashier_data",
-    sidebar_title="Cashier's info",
-    sidebar_icon="user",
-    index_position=0,
-    on_load=CashierState.load_entries
+    page_title="Customers :: SuperMarket",
+    route="/project/customers",
+    sidebar_title="Customers for the day",
+    sidebar_icon="shopping-basket",
+    index_position=1,
+    on_load=ClientState.load_entries
 )
-def cashier_data() -> rx.Component:
-    """Create and return the DataTable for the cashier data"""
+def customers_in_store() -> rx.Component:
+    """Build the page to handle the 'Tasks', being
+    the customers to arrive to the store
+    """
     # Set the _query_method
-    CashierState.set_query_method(get_cashier_data)
+    ClientState.set_query_method(get_client_data)
     # Init the table
-    table = DataTable(CashierState)
+    table = DataTable(ClientState)
     table.add_cols(COLUMNS)
-
-    # Add the data
-    #! STATE
-    import random  # pylint: disable=C0415
-    table.add_data([{
-        "name": f"Cashier {i}",
-        "available_in_the_morning": True,
-        "available_in_the_afternoon": False,
-        "effectiveness_average": round(random.random()*100, 3)
-    } for i in range(0, 100)])
-
-    # Convert this table to editable
-    table.is_editable = True
-
-    # Return the box with the table component
+    # Return the element
     return rx.box(
-        rx.heading(
-            "Cashier info", as_="h1",
-            margin_top="1em"
-        ),
         # Add a minor spacing
         rx.spacer(),
         rx.center(
