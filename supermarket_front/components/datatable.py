@@ -9,7 +9,7 @@ from typing import (
 from dataclasses import dataclass
 import reflex as rx
 # Local imports
-from supermarket_front.components.table_state import TableState
+from supermarket_front.components.table_state import TableState, to_snake_case
 
 T = TypeVar('T')
 
@@ -87,6 +87,13 @@ class DataTable:
         self._data = []
         self._editable = False
         # Set the state
+
+        if not hasattr(state, "load_entries"):
+            raise RuntimeError(
+                "You need a `load_entries` method in this state. Please define one and all the " +
+                "`self._back_load_entries` method inside it."
+            )
+
         self._state = state
 
 
@@ -153,26 +160,26 @@ class DataTable:
                 # Add the search params,
                 rx.hstack(
                     rx.cond(
-                        True,  # State.sort_reverse,
+                        self._state.sort_reverse,
                         rx.icon(
                             "arrow-down-z-a", size=28, stroke_width=1.5, cursor="pointer",
-                            # on_click=State.toggle_sort
+                            on_click=self._state.toggle_sort
                         ),
                         rx.icon(
                             "arrow-down-a-z", size=28, stroke_width=1.5, cursor="pointer",
-                            # on_click=State.toggle_sort
+                            on_click=self._state.toggle_sort
                         ),
                     ),
                     rx.select(
-                        [col.title for col in self._cols],
+                        ["-"] + [col.title for col in self._cols],
                         placeholder="Sort By",
                         size="3",
-                        # on_change=lambda sort_value: State.sort_values(sort_value),
+                        on_change=self._state.sort_values,
                     ),
                     rx.input(
                         placeholder="Search here...",
                         size="3",
-                        # on_change=lambda value: State.filter_values(value),
+                        on_change=self._state.filter_values,
                     )
                 ),
                 spacing="3",
@@ -196,10 +203,17 @@ class DataTable:
                 width="100%",
                 max_height="80%",
                 # overflow="auto"
-                on_mount=self._state.load_entries
+                on_mount=self._state.load_entries  # type: ignore
             ),
             rx.flex(
                 rx.hstack(
+                    # Add a minor `Entries` section
+                    rx.input(
+                        placeholder="Limit of entries",
+                        size="2",
+                        on_change=self._state.set_limit,
+                    ),
+                    # Add the change page buttons
                     rx.button(
                         "<",
                         cursor=rx.cond(
@@ -422,11 +436,6 @@ class DataTable:
 # ================= #
 #   Extra methods   #
 # ================= #
-
-
-def to_snake_case(title: str) -> str:
-    """Convert a data table column title into snake case"""
-    return title.lower().replace(" ", "_")
 
 
 def _modify_data(value: Any, as_type: DataTableCol | None) -> rx.Component:
