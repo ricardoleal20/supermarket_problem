@@ -19,12 +19,33 @@ from supermarket_front.components.table_state import TableState
 
 COLUMNS: list[DataTableCol] = [
     DataTableCol(
+        title="Hour of arrival",
+        type="int",
+        description="Hour of arrival",
+        icon="watch"
+    ),
+    DataTableCol(
         title="Qty of Items",
         type="int",
         description="How many items is going to buy",
         icon="shopping-bag"
     )
 ]
+
+
+def calculate_time(num_int: int) -> str:
+    """Based on a random number integer, return their hour in the middle of the day."""
+    if not 0 <= num_int <= 720:
+        raise ValueError("The number must be 0 and 720.")
+
+    base_hour = 8
+    total_minutes = num_int
+    hours = total_minutes // 60
+    minutes = total_minutes % 60
+
+    # Calcula la hora
+    hour = base_hour + hours
+    return f"{hour:02}:{minutes:02}"
 
 
 class CustomerState(TableState):
@@ -34,17 +55,18 @@ class CustomerState(TableState):
     @staticmethod
     async def query_method() -> list[dict[str, int | float | str | bool]]:
         """Query method for the Cashier State"""
-        await asyncio.sleep(5)
+        await asyncio.sleep(1)
         # Then, return the data
         import random  # pylint: disable=C0415
         return [
             {
+                "hour_of_arrival": calculate_time(random.randint(0, 720)),
                 "qty_of_items": random.randint(0, 50)
             } for _ in range(0, 100)
         ]
 
     async def load_entries(self) -> None:
-        """..."""
+        """Method to load the entries of the algorithm"""
         await self._back_load_entries()
 
     async def fetch_data(self):

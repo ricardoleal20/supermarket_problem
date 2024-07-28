@@ -3,10 +3,12 @@ Include a DataTable component with custom data
 """
 from typing import (
     Any, Optional, TypeVar, Callable,
-    Literal
+    Literal, get_type_hints
 )
+from collections import deque
 # External imports
 from dataclasses import dataclass
+import pydash as _py
 import reflex as rx
 # Local imports
 from supermarket_front.components.table_state import TableState, to_snake_case
@@ -78,14 +80,20 @@ class DataTable:
     _data_value_type: Any
     _state: type[TableState]
     _editable: bool
+    _data_model: dict[str, Any]
     # Slots
-    __slots__ = ["_cols", "_data", "_data_value_type", "_state", "_editable"]
+    __slots__ = ["_cols", "_data", "_data_value_type",
+                 "_state", "_editable", "_data_model"]
 
-    def __init__(self, state: type[TableState]) -> None:
+    def __init__(
+        self,
+        state: type[TableState],
+    ) -> None:
         # Init the params
         self._cols = []
         self._data = []
         self._editable = False
+        self._data_model = {}
         # Set the state
 
         if not hasattr(state, "load_entries"):
@@ -108,17 +116,13 @@ class DataTable:
         else:
             self._cols.append(columns)
 
-    def add_data(self, data: list[dict[str, Any]] | dict[str, Any]) -> None:
+    def add_data_model(self, data_model: type) -> None:
         """Include data to show in the data table.
 
         Args:
-            data (list[dict[str, Any]] | dict[str, Any]): Data for the columns
+            data_model (type): Include a dataclass of the type model to know how to fill the columns
         """
-        if isinstance(data, dict):
-            data = [data]
-        # Iterate over it
-        for datum in data:
-            self._data.append(datum)
+        self._data_model = get_type_hints(data_model)
 
     @property
     def is_editable(self) -> bool:
@@ -141,12 +145,10 @@ class DataTable:
         if not self._cols:
             raise RuntimeError(
                 "There are no columns to use to build this component")
-        if any(len(datum) != len(self._cols) for datum in self._data):
-            raise RuntimeError(
-                "At least, one datum in the provided data does not have the correct " +
-                "amount of elements for the columns. It needs to have the following keys: " +
-                f"{[to_snake_case(col.title) for col in self._cols]}."
-            )
+        # if not self._data_model:
+        #     raise RuntimeError(
+        #         "There are no data model to use to build the columns of the component"
+        #     )
         init_flex: list[rx.Component] = []
         # Add the `Add button` if the data table is editable
         if self._editable is True:

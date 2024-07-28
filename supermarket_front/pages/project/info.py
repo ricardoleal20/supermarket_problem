@@ -19,7 +19,7 @@ from supermarket_front.components import sidebar_section
 
 @sidebar_section(
     page_title="Problem information :: SuperMarket",
-    route="/project/problem/info",
+    route="/project/problem/problem_info",
     sidebar_title="Problem description",
     group="Info",
     group_icon="info",
@@ -32,7 +32,7 @@ def description() -> rx.Component:
 
 @sidebar_section(
     page_title="Engine used :: SuperMarket",
-    route="/project/problem/info",
+    route="/project/problem/engine_info",
     sidebar_title="How it was solved",
     group="Info",
     group_icon="info",

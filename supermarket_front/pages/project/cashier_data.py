@@ -23,7 +23,7 @@ import reflex as rx
 # Local imports
 from supermarket_front.components import sidebar_section, Loading
 from supermarket_front.components.datatable import DataTable, DataTableCol
-from supermarket_front.components.table_state import TableState
+from supermarket_front.components.table_state import TableState, DataModel
 
 
 
@@ -61,6 +61,13 @@ COLUMNS: list[DataTableCol] = [
 ]
 
 
+class CashierModel(DataModel):
+    """Model for the Cashier data"""
+    name: str
+    available_in_the_morning: bool
+    available_in_the_afternoon: bool
+    effectiveness_average: float
+
 class CashierState(TableState):
     """State for the cashiers"""
     __unique__: bool = True
@@ -68,7 +75,7 @@ class CashierState(TableState):
     @staticmethod
     async def query_method() -> list[dict[str, int | float | str | bool]]:
         """Query method for the Cashier State"""
-        await asyncio.sleep(10)
+        await asyncio.sleep(1)
         # Then, return the data
         import random  # pylint: disable=C0415
         return [
@@ -77,11 +84,16 @@ class CashierState(TableState):
                 "available_in_the_morning": True,
                 "available_in_the_afternoon": False,
                 "effectiveness_average": round(random.random()*100, 3)
-            } for i in range(0, 100)
+            } for i in range(0, 10)
         ]
 
+    @property
+    def data_model(self) -> type[CashierModel]:
+        """Return the data model"""
+        return CashierModel
+
     async def load_entries(self) -> None:
-        """..."""
+        """Method to load the entries of the algorithm"""
         await self._back_load_entries()
 
     async def fetch_data(self):
@@ -108,17 +120,8 @@ def cashier_data() -> rx.Component:
     # Init the table
     table = DataTable(CashierState)
     table.add_cols(COLUMNS)
-
-    # Add the data
-    #! STATE
-    import random  # pylint: disable=C0415
-    table.add_data([{
-        "name": f"Cashier {i}",
-        "available_in_the_morning": True,
-        "available_in_the_afternoon": False,
-        "effectiveness_average": round(random.random()*100, 3)
-    } for i in range(0, 100)])
-
+    # Add the data model
+    table.add_data_model(CashierModel)
     # Convert this table to editable
     table.is_editable = True
 
@@ -145,5 +148,6 @@ def cashier_data() -> rx.Component:
                 # max_height="80%"
             ),
         ),
-        width="100%"
+        width="100%",
+        height="100%",
     )

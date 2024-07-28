@@ -1,23 +1,29 @@
 """
 Create the TableState for the data table
 """
+from dataclasses import dataclass
 # Reflex imports
 import reflex as rx
 
 
+@dataclass(slots=True)
+class DataModel:  # pylint: disable=E0239, R0902
+    """Base DataModel to inherit from another class"""
 
-async def _dummy_get_data():
-    return [{"id": 1, "name": "Example", "age": 30}]  # Ejemplo de datos
 
+Datum = dict[str, int | float | str | bool]
 
 class TableState(rx.State):  # pylint: disable=E0239, R0902
     """State for the DataTable"""
     #! BackEnd Vars
-    _full_data: list[dict[str, int | float | str | bool]] = []
+    _full_data: list[Datum] = []
     _n_items: int = 0
     _limit: int = 5
     _offset: int = 0
     _sort_value: str = ""
+
+    # #! Data model
+    # data_model: type[DataModel] = DataModel
 
     #! FrontEnd Vars
     have_prev: bool = False
@@ -26,7 +32,13 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
     page_number: int = 0
     total_pages: int = 0
     sort_reverse: bool = False
-    data: list[dict[str, int | float | str | bool]] = []
+    data: list[Datum] = []
+
+    # Method to return the data model
+    @property
+    def data_model(self) -> type[DataModel]:
+        """Return the data model"""
+        return DataModel
 
     # Method to sort the data based on a parameter given
     async def sort_values(self, sort_value: str) -> None:
@@ -34,7 +46,7 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
         if sort_value and sort_value != "-":
             self.data = list(sorted(
                 self.data,
-                key=lambda val: val[to_snake_case(sort_value)],
+                key=lambda val: getattr(val, to_snake_case(sort_value)),
                 reverse=self.sort_reverse
             ))
             # Change the sort value parameter
@@ -93,6 +105,8 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
         # Start the loading mode...
         self.loading = True
         self._full_data = await self.query_method()
+        # Transform all the data into the data model object
+        # self._full_data = [self.data_model(**data) for data in queried_data]
         # Once you've got all the full data, perform minor changes
         self._n_items = len(self._full_data)
         self.loading = False
@@ -120,7 +134,6 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
 # ===================== #
 #     Extra methods     #
 # ===================== #
-
 
 def to_snake_case(title: str) -> str:
     """Convert a data table column title into snake case"""
