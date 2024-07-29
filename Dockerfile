@@ -1,7 +1,14 @@
 # Get the Python 3.11 for this
 FROM python:3.11-slim
-FROM node:lts-slim as build
 WORKDIR /app
+
+# Get node JS
+RUN apt-get update && \
+    apt-get install -y curl gnupg && \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Get the environment for this
 ENV PYTHONNUNBUFFERED 1
@@ -10,14 +17,17 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV POETRY_VERSION=1.5.1
 
-# Install the system dependencies
-RUN apt-get update
+# Install the system dependencies and install poetry
+RUN apt-get update && \
+    apt-get install -y build-essential && \
+    pip install --upgrade pip && \
+    pip install poetry
 
-# Run and uupdate pip
-RUN pip3 install --upgrade pip
-# Install poetry
-RUN pip3 install poetry
 # With poetry, install everything
 RUN poetry install --no-interaction --no-ansi --no-root
 
+# Copy everything of the code
+COPY . /app/
 
+# Add the command to run
+CMD ["reflex","run"]
