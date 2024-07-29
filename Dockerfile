@@ -4,11 +4,12 @@ WORKDIR /app
 
 # Get node JS
 RUN apt-get update && \
-    apt-get install -y curl gnupg && \
+    apt-get install -y curl gnupg build-essential unzip && \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
 
 # Get the environment for this
 ENV PYTHONNUNBUFFERED 1
@@ -33,4 +34,4 @@ RUN poetry install --no-interaction --no-ansi --no-root
 COPY . /app/
 
 # Add the command to run
-CMD ["poetry", "run", "reflex","run"]
+CMD ["poetry", "run", "reflex", "run", "--env", "prod"]
