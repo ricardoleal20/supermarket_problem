@@ -10,6 +10,8 @@ readme = "README.md"
 python = ">=3.10, <3.13"
 pymath_compute = "~=0.3.0"
 pydash = "~=8.0.1"
+plotly = "~=5.23.0"
+pandas = "~=2.2.2"
 
 [tool.poetry.dev-dependencies]
 reflex = "~=0.5.7"
