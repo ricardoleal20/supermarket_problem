@@ -441,7 +441,7 @@ def sidebar_section(  # pylint: disable=R0913
                 sidebar(route),
                 rx.box(
                     rx.mobile_and_tablet(
-                        margin_top="3em"
+                        margin_top="4.5em"
                     ),
                     rx.vstack(
                         page_cont(),
