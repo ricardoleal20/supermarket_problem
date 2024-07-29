@@ -33,4 +33,4 @@ RUN poetry install --no-interaction --no-ansi --no-root
 COPY . /app/
 
 # Add the command to run
-CMD ["reflex","run"]
+CMD ["poetry", "run", "reflex","run"]
