@@ -23,6 +23,9 @@ RUN apt-get update && \
     pip install --upgrade pip && \
     pip install poetry
 
+# Copy the pyproject.toml
+COPY pyproject.toml poetry.lock* /app/
+
 # With poetry, install everything
 RUN poetry install --no-interaction --no-ansi --no-root
 
