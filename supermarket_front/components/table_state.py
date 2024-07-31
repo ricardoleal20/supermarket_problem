@@ -1,17 +1,18 @@
 """
 Create the TableState for the data table
 """
+from typing import Union
 from dataclasses import dataclass
 # Reflex imports
 import reflex as rx
 
 
-@dataclass(slots=True)
+@dataclass
 class DataModel:  # pylint: disable=E0239, R0902
     """Base DataModel to inherit from another class"""
 
 
-Datum = dict[str, int | float | str | bool]
+Datum = dict[str, Union[int, float, str, bool]]
 
 class TableState(rx.State):  # pylint: disable=E0239, R0902
     """State for the DataTable"""

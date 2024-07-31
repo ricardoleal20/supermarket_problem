@@ -5,10 +5,11 @@ Timeline component for N tasks and N processors
 This would show the processor as the Y axis, and the
 task are going to be the elements on the X axis.
 """
-from typing import Any
+from typing import Any, Union
 from enum import Enum
 # Import the plotly lib, pandas and reflex
 import plotly.express as px
+from plotly.graph_objects import Figure
 import pandas as pd
 import reflex as rx
 
@@ -43,14 +44,17 @@ class Timeline:
     """Timeline component for UI."""
     _data: pd.DataFrame
     _hover_custom_params: dict[str, str]
+    _extra_params: dict[str, Any]
 
     __slots__ = [
-        "_hover_custom_params", "_data"
+        "_hover_custom_params", "_data",
+        "_extra_params"
     ]
 
     def __init__(self) -> None:
         self._data = None  # type: ignore
         self._hover_custom_params = {}
+        self._extra_params = {}
 
     def set_data(self, data: list[dict[str, Any]]) -> None:
         """Set the data to represent and show in the timeline component
@@ -62,7 +66,13 @@ class Timeline:
         #! TODO: TO BE ADDED
         self._data = pd.DataFrame(data)
 
-    def set_custom_info_in_hover(self, custom_info: dict[str, TimelineHoverTypes | str]) -> None:
+    def set_extra_params(self, extra_parameters: dict[str, Any]) -> None:
+        """Set the extra parameters to show in the figure"""
+        self._extra_params = extra_parameters
+
+    def set_custom_info_in_hover(
+        self, custom_info: dict[str, Union[TimelineHoverTypes, str]]
+    ) -> None:
         """Set the custom info to be show it on the hover info.
         
         Args:
@@ -84,12 +94,27 @@ class Timeline:
     @property
     def component(self) -> rx.Component:
         """Return the Timeline as component"""
+
+        return rx.box(
+            rx.center(
+                rx.plotly(
+                    data=self._create_timeline_fig(),
+                    config={'displaylogo': False},
+                )
+            ),
+            width="100%",
+            height="100%"
+        )
+
+    def _create_timeline_fig(self) -> Figure:
+        """Create the timeline figure"""
         # Create the timeline component
         timeline_fig = px.timeline(
             self._data,
             x_start="start",
             x_end="end",
-            y="processor"
+            y="processor",
+            **self._extra_params
         )
         timeline_fig.update_yaxes(autorange="reversed", title_text=None)
         timeline_fig.update_xaxes(
@@ -138,7 +163,8 @@ class Timeline:
                 'pan', 'select', 'lasso2d', 'zoom2d', 'zoom3d', 'resetCameraDefault3d',
                 'resetCameraLastSave3d', 'hoverClosestCartesian', 'hoverCompareCartesian',
                 'hoverClosest3d', 'toggleSpikelines', 'toImage', 'resetViews'
-            ]
+            ],
+            # paper_bgcolor=""
         )
 
         # Update the width and heigh
@@ -149,14 +175,5 @@ class Timeline:
                 "tickmode": 'linear'
             }
         )
-
-        return rx.box(
-            rx.center(
-                rx.plotly(
-                    data=timeline_fig,
-                    config={'displaylogo': False},
-                )
-            ),
-            width="100%",
-            height="100%"
-        )
+        # Return the figure
+        return timeline_fig

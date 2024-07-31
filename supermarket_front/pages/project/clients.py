@@ -10,6 +10,7 @@ Also, we'll include three options at the top-left side, being those options:
 - Middle day: Build normal customers for the day
 - Overcharged day: Make the day heavy and almost without rest for the cashiers
 """
+from typing import Union
 import asyncio
 import reflex as rx
 # Local imports
@@ -53,7 +54,7 @@ class CustomerState(TableState):
     __unique__: bool = True
 
     @staticmethod
-    async def query_method() -> list[dict[str, int | float | str | bool]]:
+    async def query_method() -> list[dict[str, Union[int, float, str, bool]]]:
         """Query method for the Cashier State"""
         await asyncio.sleep(1)
         # Then, return the data

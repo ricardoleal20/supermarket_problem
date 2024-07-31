@@ -31,9 +31,12 @@ In the middle, we'll include a graph that is going to use three different states
             Item 2: The table of solution
             Item 3: Stats of solution
 """
-from typing import Any
+from typing import Any, Union
+import asyncio
 # External imports
 import reflex as rx
+import plotly.express as px
+from plotly.graph_objects import Figure
 # Local imports
 from supermarket_front.components import sidebar_section
 from supermarket_front.components.timeline import Timeline, TimelineHoverTypes
@@ -44,14 +47,45 @@ from supermarket_front import styles
 
 class SolutionData(rx.State):  # pylint: disable=E0239
     """State to obtain the data when we click the button to obtain a solution"""
-    data: list[dict[str, int | float | bool]]
+    data: list[dict[str, Union[int, float, bool]]] = []
+    loading: bool = False
+    has_plot: bool = False
+    component: Figure = px.line(
+    )
 
-    def restart_data(self) -> None:
+    def restart_data(self):
         """Restart all the values in the state"""
+        self.has_plot = False
+        yield
         self.data = []
+        self.component = px.line()
 
-    def fetch_data(self) -> None:
+    def plot(self) -> None:
+        """..."""
+        timeline = Timeline()
+        # Set the data to the timeline
+        timeline.set_data(self.data)
+        # Set the extra info to show in the hover
+        timeline.set_custom_info_in_hover({
+            "duration": TimelineHoverTypes.MINUTES,
+            "products": " units"
+        })
+        # Create the component
+        self.component = timeline._create_timeline_fig()  # pylint: disable=W0212
+        self.has_plot = True
+
+    async def fetch_data(self):
         """Fetch the data"""
+        self.loading = True
+        yield
+        # Perform the query
+        self.data = await fetch_solution_data()
+        # Mark this as loading = False
+        self.loading = False
+        # Modify the component
+        self.plot()
+        yield
+
 
 
 def calculate_time(num_int: int) -> str:
@@ -69,18 +103,17 @@ def calculate_time(num_int: int) -> str:
     return f"2024-07-28T{hour:02}:{minutes:02}:00"
 
 
-def fetch_solution_data() -> list[dict[str, Any]]:
+async def fetch_solution_data() -> list[dict[str, Any]]:
     """..."""
-    # time.sleep(1)
+    await asyncio.sleep(5)
     # Create the data
-
     import random  # pylint: disable=C0415
     solution: list[dict[str, Any]] = []
     for i in range(0, 5):
         # Define an start randomly
         start = 0
         for _ in range(0, 30):
-            end = start + random.randint(5, 20)
+            end = start + random.randint(5, 100)
             if start >= 720 or end >= 720:
                 break
 
@@ -106,18 +139,6 @@ def fetch_solution_data() -> list[dict[str, Any]]:
 )
 def run() -> rx.Component:
     """Run the problem using the data provided."""
-    # Create the timeline class
-    timeline = Timeline()
-    # Obtain the data
-    data = fetch_solution_data()
-    # Set the data to the timeline
-    timeline.set_data(data)
-    # Set the extra info to show in the hover
-    timeline.set_custom_info_in_hover({
-        "duration": TimelineHoverTypes.MINUTES,
-        "products": " units"
-    })
-
     return rx.box(
         # The header of the problem
         rx.hstack(
@@ -130,21 +151,65 @@ def run() -> rx.Component:
                 "Run",
                 size="3",
                 margin_right="1em",
-                width="10em",
+                width="8em",
                 border_radius=styles.BORDER_RADIUS,
                 background_color=styles.Color.PRIMARY,
                 cursor="pointer",
                 _hover={
                     "opacity": "40%"
-                }
+                },
+                loading=SolutionData.loading,
+                on_click=SolutionData.fetch_data,
+                disabled=SolutionData.loading,
             ),
             margin_top="1em"
         ),
-        # The content
-        rx.vstack(
-            # Add the component
-            timeline.component,
-            # Add the text explaining why you should run the algorithm
+        # Add the component
+        rx.center(
+            rx.cond(
+                SolutionData.has_plot,
+                rx.box(
+                    rx.plotly(
+                        data=SolutionData.component,
+                        config={'displaylogo': False},
+                        # layout={
+                        #     "paper_bgcolor": rx.color("black", shade=10)
+                        # }
+                    ),
+                    # background=styles.Color.BACKGROUND.value,
+                    # border_radius=styles.BORDER_RADIUS
+                ),
+                # Add the `empty page`
+                rx.center(
+                    rx.vstack(
+                        rx.hstack(
+                            rx.heading(
+                                "There's no data", as_="h1"),
+                        ),
+                        rx.text(
+                            "There's no data to show. \n" +
+                            "To show data, click on `Run`."
+                        ),
+                        width="100%",
+                        height="15rem",
+                        border_radius=styles.BORDER_RADIUS,
+                        background=rx.color("gray", shade=3),
+                        background_color=rx.color(
+                            "gray", shade=3),
+                        align_items="center",
+                        justify_content="center"
+                    ),
+                    margin_right="1em",
+                    width="100%",
+                    height="100%",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center"
+                ),
+            ),
+            margin_top="2em",
+            width="100%",
+            height="100%"
         ),
         width="100%",
         height="100%"

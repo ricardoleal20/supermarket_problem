@@ -18,6 +18,7 @@ The morning time is:
 The afternoon time is:
     - From 2 pm to 8 pm
 """
+from typing import Union
 import asyncio
 import reflex as rx
 # Local imports
@@ -73,7 +74,7 @@ class CashierState(TableState):
     __unique__: bool = True
 
     @staticmethod
-    async def query_method() -> list[dict[str, int | float | str | bool]]:
+    async def query_method() -> list[dict[str, Union[int, float, str, bool]]]:
         """Query method for the Cashier State"""
         await asyncio.sleep(1)
         # Then, return the data
@@ -126,16 +127,15 @@ def cashier_data() -> rx.Component:
     table.is_editable = True
 
     # Return the box with the table component
-    return rx.box(
-        rx.heading(
-            "Cashier info", as_="h1",
-            margin_top="1em"
-        ),
-        # Add a minor spacing
-        rx.spacer(),
-        rx.cond(
-            CashierState.loading,
-            Loading(),
+    return rx.cond(
+        CashierState.loading,
+        Loading(),
+        rx.vstack(
+            rx.heading(
+                "Cashier info", as_="h1",
+                margin_top="1em"
+            ),
+            # Add a minor spacing
             rx.center(
                 rx.vstack(
                     table.component,
@@ -145,9 +145,11 @@ def cashier_data() -> rx.Component:
                     margin_bottom="3em"
                 ),
                 width="100%",
-                # max_height="80%"
             ),
+            # width="100%",
+            # max_height="80%"
+            width="100%",
+            height="100%",
         ),
-        width="100%",
-        height="100%",
     )
+

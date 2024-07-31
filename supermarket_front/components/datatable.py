@@ -3,9 +3,8 @@ Include a DataTable component with custom data
 """
 from typing import (
     Any, Optional, TypeVar, Callable,
-    Literal, get_type_hints
+    Literal, get_type_hints, Union
 )
-from collections import deque
 # External imports
 from dataclasses import dataclass
 import pydash as _py
@@ -104,8 +103,7 @@ class DataTable:
 
         self._state = state
 
-
-    def add_cols(self, columns: list[DataTableCol] | DataTableCol) -> None:
+    def add_cols(self, columns: Union[list[DataTableCol], DataTableCol]) -> None:
         """Add DataTable columns
 
         Args:
@@ -440,7 +438,7 @@ class DataTable:
 # ================= #
 
 
-def _modify_data(value: Any, as_type: DataTableCol | None) -> rx.Component:
+def _modify_data(value: Any, as_type: Union[DataTableCol, None]) -> rx.Component:
     """Create their unique table cell depending on the given type"""
     if as_type is None:
         return rx.table.cell(value)

@@ -1,0 +1,10 @@
+v: 0
+
+micros:
+  - name: app
+    src: .
+    engine: custom
+    commands:
+      - pip install poetry
+      - poetry install --no-interaction --no-ansi --no-root
+      - poetry run reflex run --env prod

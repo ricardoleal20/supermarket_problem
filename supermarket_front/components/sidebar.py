@@ -256,14 +256,15 @@ def sidebar_footer() -> rx.Component:
             " available in the environment variables. Add them as" +
             " `GITHUB_PROJECT_URL` if you want to see it"
         )
-    return rx.hstack(
+    return rx.center(
+        rx.hstack(
         rx.spacer(),
         rx.link(
             rx.text("Portfolio"),
             href="https://portfolio.ricardoleal20.dev",
             color_scheme="gray",
         ),
-        rx.text(" :: "),
+            rx.icon("grip-horizontal", color_scheme="gray", size=20),
         rx.link(
             rx.text("Code"),
             href=github_project_url,
@@ -272,6 +273,9 @@ def sidebar_footer() -> rx.Component:
         width="100%",
         border_top=styles.BORDER,
         padding="1em",
+        ),
+        width="100%",
+
     )
 
 
@@ -450,6 +454,7 @@ def sidebar_section(  # pylint: disable=R0913
                     height="100%"
                 ),
                 align="start",
+                height="100%",
                 # position="relative",
             )
 
