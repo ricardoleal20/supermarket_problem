@@ -14,8 +14,7 @@ This includes two tabs:
 """
 import reflex as rx
 # Local imports
-from supermarket_front.components import sidebar_section
-
+from supermarket_front.components import sidebar_section, WIP
 
 @sidebar_section(
     page_title="Problem information :: SuperMarket",
@@ -27,7 +26,7 @@ from supermarket_front.components import sidebar_section
 )
 def description() -> rx.Component:
     """Information page"""
-    return rx.box()
+    return WIP()
 
 
 @sidebar_section(
@@ -39,4 +38,4 @@ def description() -> rx.Component:
 )
 def how_it_was_solved() -> rx.Component:
     """Information page"""
-    return rx.box()
+    return WIP()

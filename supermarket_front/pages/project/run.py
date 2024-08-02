@@ -155,6 +155,7 @@ def run() -> rx.Component:
                 border_radius=styles.BORDER_RADIUS,
                 background_color=styles.Color.PRIMARY,
                 cursor="pointer",
+                transition="all 0.15s ease-out allow-discrete",
                 _hover={
                     "opacity": "40%"
                 },
@@ -182,6 +183,11 @@ def run() -> rx.Component:
                 # Add the `empty page`
                 rx.center(
                     rx.vstack(
+                        rx.divider(
+                            width="95%",
+                            margin_top="1.5em",
+                        ),
+                        rx.spacer(),
                         rx.hstack(
                             rx.heading(
                                 "There's no data", as_="h1"),
@@ -189,6 +195,11 @@ def run() -> rx.Component:
                         rx.text(
                             "There's no data to show. \n" +
                             "To show data, click on `Run`."
+                        ),
+                        rx.spacer(),
+                        rx.divider(
+                            width="95%",
+                            margin_bottom="1.5em",
                         ),
                         width="100%",
                         height="15rem",
