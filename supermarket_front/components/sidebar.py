@@ -77,6 +77,8 @@ def __sort_stacks(route: str) -> list[rx.Component]:
             group_name, group_elements["sections"], route, icon)
     # Check if you have any SIDEBAR_REDIRECT
     if SIDEBAR_REDIRECT:
+        # Add the spacer
+        stacks.update({min(SIDEBAR_REDIRECT.keys()) - 1: rx.spacer()})
         stacks.update(SIDEBAR_REDIRECT)
 
     return [
@@ -94,6 +96,7 @@ def __sidebar_desktop_view(route: str) -> rx.Component:
             rx.vstack(
                 *sorted_stacks,
                 width="100%",
+                height="100%",
                 overflow_y="auto",
                 align_items="flex-start",
                 padding="1em",
@@ -169,6 +172,7 @@ def __sidebar_mobile_and_tablet_view(route: str) -> rx.Component:
                                 rx.vstack(
                                     *sorted_stacks,
                                     width="100%",
+                                    height="100%",
                                     align_items="flex-start",
                                     padding="1em",
                                 ),
@@ -223,10 +227,16 @@ def sidebar_header(
             rx.link(
                 rx.button(
                     rx.icon("github"),
-                    color_scheme="gray",
+                    background=styles.Color.BACKGROUND.value,
+                    color=styles.Color.BACKGROUND_CONTENT.value,
                     variant="soft",
                     cursor="pointer",
-                    border_radius=styles.BORDER_RADIUS
+                    border_radius=styles.BORDER_RADIUS,
+                    transition="all 0.15s ease-out allow-discrete",
+                    _hover={
+                        "background": styles.Color.BACKGROUND_SECONDARY.value,
+                        "color": styles.Color.PRIMARY.value
+                    }
                 ),
                 href=github_project_url,
             ),
@@ -260,22 +270,40 @@ def sidebar_footer() -> rx.Component:
         rx.hstack(
         rx.spacer(),
         rx.link(
-            rx.text("Portfolio"),
+            rx.text(
+                "Portfolio",
+                transition="all 0.15s ease-out allow-discrete",
+                _hover={
+                    "color": styles.Color.PRIMARY.value
+                }
+            ),
             href="https://portfolio.ricardoleal20.dev",
             color_scheme="gray",
+            underline="none",
+            _hover={
+                "color": styles.Color.PRIMARY.value
+            }
         ),
             rx.icon("grip-horizontal", color_scheme="gray", size=20),
         rx.link(
-            rx.text("Code"),
+            rx.text(
+                "Code",
+                transition="all 0.15s ease-out allow-discrete",
+                _hover={
+                    "color": styles.Color.PRIMARY.value
+                }),
             href=github_project_url,
             color_scheme="gray",
+            underline="none",
+            _hover={
+                "color": styles.Color.PRIMARY.value
+            }
         ),
         width="100%",
         border_top=styles.BORDER,
         padding="1em",
         ),
         width="100%",
-
     )
 
 
@@ -330,6 +358,7 @@ def sidebar_item(
             width="100%",
             padding="1em",
             margin_bottom="0.5em",
+            transition="all 0.15s ease-in allow-discrete",
             _hover={
                 "bg": styles.Color.SIDEBAR_HOVER_BACKGROUND,
                 "text": styles.Color.SIDEBAR_TEXT,
@@ -506,9 +535,4 @@ def sidebar_redirect(
         False, sidebar_icon,
     )
     # Add this to the SIDEBAR_REDIRECT
-    SIDEBAR_REDIRECT[index_position] = rx.vstack(
-        rx.spacer(),
-        item,
-        height="100%",
-        width="100%"
-    )
+    SIDEBAR_REDIRECT[index_position] = item
