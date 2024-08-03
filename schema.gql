@@ -1,0 +1,20 @@
+type Cashier {
+  name: String
+  available_in_the_morning: bool
+  available_in_the_afternoon: bool
+  effectiveness_average: Float
+}
+
+type Client {
+  hour_of_arrival: Integer
+  qty_of_items: Integer
+}
+
+type SolutionTask {
+  cashier: Cashier
+  task: Client
+  start: Integer
+  end: Integer
+  duration: Integer
+  products: Integer
+}
