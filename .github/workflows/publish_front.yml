@@ -33,7 +33,7 @@ jobs:
         run: pip install -Iv reflex~=0.5.6
 
       - name: Build page 🧱
-        run: API_URL=https://supermarket-ptimization.ricardoleal20.dev reflex export --frontend-only
+        run: API_URL=https://supermarket-problem.onrender.com reflex export --frontend-only
 
       - name: Extract page 🔐
         run: unzip frontend.zip
@@ -41,7 +41,7 @@ jobs:
       - name: Inject page 💉
         run: python replace_urls.py
         env:
-          URL: https://supermarket-ptimization.ricardoleal20.dev
+          URL: https://supermarket-problem.onrender.com
 
       - name: Setup Pages 🧱
         uses: actions/configure-pages@v5
