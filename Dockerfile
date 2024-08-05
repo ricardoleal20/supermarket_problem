@@ -28,7 +28,7 @@ RUN apt-get update && \
 COPY pyproject.toml poetry.lock* /app/
 
 # With poetry, install everything
-RUN poetry install --no-interaction --no-ansi --no-root
+RUN poetry lock && poetry install --no-interaction --no-ansi --no-root
 
 # Copy everything of the code
 COPY . /app/
