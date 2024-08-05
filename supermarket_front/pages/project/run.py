@@ -148,6 +148,11 @@ def run() -> rx.Component:
             ),
             rx.spacer(),
             rx.button(
+                rx.cond(
+                    SolutionData.loading,
+                    rx.spinner(),
+                    rx.icon("app-window-mac")
+                ),
                 "Run",
                 size="3",
                 margin_right="1em",
@@ -159,7 +164,7 @@ def run() -> rx.Component:
                 _hover={
                     "opacity": "40%"
                 },
-                loading=SolutionData.loading,
+                # loading=SolutionData.loading,
                 on_click=SolutionData.fetch_data,
                 disabled=SolutionData.loading,
             ),
@@ -193,8 +198,7 @@ def run() -> rx.Component:
                                 "There's no data", as_="h1"),
                         ),
                         rx.text(
-                            "There's no data to show. \n" +
-                            "To show data, click on `Run`."
+                            "To show the results, click on `Run`."
                         ),
                         rx.spacer(),
                         rx.divider(
