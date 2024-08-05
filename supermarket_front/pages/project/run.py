@@ -78,6 +78,7 @@ class SolutionData(rx.State):  # pylint: disable=E0239
         """Fetch the data"""
         self.loading = True
         yield
+        print("Requesting solution...")
         # Perform the query
         self.data = await fetch_solution_data()
         # Mark this as loading = False

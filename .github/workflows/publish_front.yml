@@ -44,7 +44,7 @@ jobs:
       - name: Inject page 💉
         run: python replace_urls.py
         env:
-          URL: https://ricardoleal20.github.io/supermarket_problem/
+          URL: https://supermarket-ptimization.ricardoleal20.dev
 
       - name: Setup Pages 🧱
         uses: actions/configure-pages@v5
