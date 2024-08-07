@@ -36,7 +36,7 @@ jobs:
 
 
       - name: Build page 🧱
-        run: API_URL=https://supermarket-problem.onrender.com poetry run reflex export --frontend-only
+        run: API_URL=https://supermarket-backend.ricardoleal20.dev poetry run reflex export --frontend-only
 
       - name: Extract page 🔐
         run: unzip frontend.zip
@@ -44,7 +44,7 @@ jobs:
       - name: Inject page 💉
         run: python replace_urls.py
         env:
-          URL: https://supermarket-ptimization.ricardoleal20.dev
+          URL: https://supermarket-opt.ricardoleal20.dev
 
       - name: Setup Pages 🧱
         uses: actions/configure-pages@v5
