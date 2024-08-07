@@ -6,6 +6,37 @@ from enum import Enum
 import reflex as rx
 
 
+class CustomParameters(rx.State):
+    navigator: str = ""
+
+    def set_navigator(self, navigator: str):
+        """Set the current navigator"""
+        self.navigator = navigator
+
+
+def select_bg_color_for_navigator() -> rx.Component | rx.vars.BaseVar:
+    """Select the background color for the navigator we are using"""
+    # Use different rx.cond
+    _ = rx.script(src="/javascript_utilities.js")
+    _ = rx.script("""
+    function detectBrowser() {
+            var ua = navigator.userAgent;
+            if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") == -1) return "Safari";
+            if (ua.indexOf("Chrome") > -1) return "Chrome";
+            if (ua.indexOf("Firefox") > -1) return "Firefox";
+            return "Unknown";
+        }
+        document.getElementById('browser').value = detectBrowser();
+    """)
+    _ = rx.input(id="browser", type="hidden",
+                 on_change=CustomParameters.set_navigator)
+    return rx.match(
+        CustomParameters.navigator,
+        ("Safari", rx.color("gray")),
+        # Default color for all the others navigators
+        rx.color("black", shade=7),
+    )
+
 class Color(Enum):
     """Include the palette of colors"""
     PRIMARY = rx.color("teal", 5)
@@ -44,3 +75,6 @@ BORDER = f"1px solid {rx.color('gray', 6)}"
 CONTENT_WIDTH_VW = "90vw"
 SIDEBAR_WIDTH = "20em"
 SIDEBAR_BORDER = f"0.5px solid {rx.color('gray', 6)}"
+
+
+GENERAL_BACKGROUND_COLOR = select_bg_color_for_navigator()

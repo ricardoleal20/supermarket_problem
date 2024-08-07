@@ -4,6 +4,7 @@ Application definition for the supermarket
 import reflex as rx
 # Import the pages
 from supermarket_front.pages import index, PROJECT_PAGES
+from supermarket_front.styles import GENERAL_BACKGROUND_COLOR
 
 # ========================================== #
 #                    APP                     #
@@ -24,7 +25,7 @@ app = rx.App(  # pylint: disable=E1102
     style={
         "font_family": "Oxygen, sans-serif",
         "font_size": "13px",
-        "background": rx.color("black", shade=5)
+        "background": GENERAL_BACKGROUND_COLOR
     }
 )
 # Add the pages
