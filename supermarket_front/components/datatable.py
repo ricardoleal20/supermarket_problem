@@ -179,8 +179,8 @@ class DataTable:
                     rx.input(
                         placeholder="Search here...",
                         size="3",
-                        on_change=self._state.filter_values,
-                    )
+                        on_change=self._state.filter_values
+                    ),
                 ),
                 spacing="3",
                 wrap="wrap",

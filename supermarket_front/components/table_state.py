@@ -47,7 +47,8 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
         if sort_value and sort_value != "-":
             self.data = list(sorted(
                 self.data,
-                key=lambda val: getattr(val, to_snake_case(sort_value)),
+                key=lambda val: val.get(to_snake_case(
+                    sort_value), None),  # type: ignore
                 reverse=self.sort_reverse
             ))
             # Change the sort value parameter
@@ -56,8 +57,17 @@ class TableState(rx.State):  # pylint: disable=E0239, R0902
             self.data = self._full_data[self._offset:self._offset + self._limit]
             self._sort_value = ""
 
-    async def filter_values(self, filter_param: str) -> None:
-        """Filter the values given a search parameter"""
+    async def filter_values(self, filter_by: str) -> None:
+        """Filter the values given a filter search"""
+        if filter_by:
+            self.data = list(filter(
+                lambda val: any(
+                    filter_by in str(value) for value in val.values()
+                ),
+                self.data
+            ))
+        else:
+            self.data = self._full_data[self._offset:self._offset + self._limit]
 
     async def toggle_sort(self) -> None:
         """Change the sort direction"""
