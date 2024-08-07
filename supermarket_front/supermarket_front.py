@@ -17,10 +17,12 @@ app = rx.App(  # pylint: disable=E1102
         has_background=True
     ),
     stylesheets=[
-        "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
+        "https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap",
+        "/animated_background.css"
     ],
     style={
-        "font_family": "Montserrat, sans-serif",
+        "font_family": "Oxygen, sans-serif",
         "font_size": "13px",
         "background": rx.color("black", shade=5)
     }
