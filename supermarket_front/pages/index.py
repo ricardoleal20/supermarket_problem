@@ -7,11 +7,19 @@ from supermarket_front import styles
 
 
 info = {
-    "TITLE": "SuperMarket optimization problem",
+    "TITLE": "Optimized Flexible Supermarket Solution",
     "DESCRIPTION": [
-        "This is a Python Project"
+        "This project aims to optimize supermarket operations by managing various aspects " +
+        "like cashier task assignments, FIFO queues, and resource allocation. " +
+        "The solution employs advanced mathematical algorithms to improve efficiency " +
+        "and reduce operational costs. By leveraging " +
+        "PyMath" +
+        ", a Python-based tool integrated " +
+        "with Rust for high-performance numerical computations, my project offers a robust " +
+        "and scalable approach to handling supermarket logistics and operations."
     ]
 }
+
 
 # ====================================== #
 #             Index component            #
@@ -24,13 +32,20 @@ def index() -> rx.Component:
     """
     return rx.box(
         rx.vstack(
+            rx.spacer(),
             # Add the project_introduction
-            project_intro(),
-            # Add the config
-            align="center",
+            __view(),
+            rx.spacer(),
+            __footer(),
             justify="center",
-            spacing="9",
-        )
+            # Add the config
+            padding="1em",
+            width="100%",
+            height="100%",
+            min_height="100vh",
+        ),
+        width="100%",
+        height="100%",
     )
 
 # ====================================== #
@@ -38,56 +53,60 @@ def index() -> rx.Component:
 # ====================================== #
 
 
-def project_intro() -> rx.Component:
-    """Initialize the project introduction in different views
-    
-    - Desktop
-    - Table
-    - Home
-    """
-    return rx.center(
-        rx.desktop_only(
-            __desktop_view()
-        ),
-        # rx.tablet_only(
-        #     ...
-        # ),
-        # rx.mobile_only(
-        #     ...
-        # )
-    )
-
-
-def __desktop_view() -> rx.Component:
+def __view() -> rx.Component:
     """Introduce the desktop view"""
-    return rx.box(
-        rx.vstack(
-            rx.center(
-                rx.heading(
-                    info["TITLE"],
-                    as_="h1"
+    return rx.vstack(
+        rx.center(
+            rx.heading(
+                info["TITLE"],
+                rx.desktop_only(
+                    font_size="10.5em"
                 ),
-                width="100%"
-            ),
-            # Add a new section
-            rx.center(
-                rx.vstack(
-                    *[rx.text(
-                        paragraph,
-                        margin="1.5em",
-                    ) for paragraph in info["DESCRIPTION"]],
-                    padding="5",
-                    border_radius=styles.BORDER_RADIUS,
-                    background_color=styles.Color.BACKGROUND_SECONDARY,
-                    width="100%"
+                rx.mobile_and_tablet(
+                    font_size="1em",
                 ),
-                width="100%"
+                as_="h1",
+                align="center"
             ),
-            # Include the button
-            __button(),
-            width="100%"
+            width="100%",
+            height="100%"
         ),
-        width="100%"
+        # Add a new section
+        rx.center(
+            rx.vstack(
+                *[rx.text(
+                    paragraph,
+                    font_family="Oxygen",
+                    font_size="1.5em",
+                    margin="1.5em",
+                ) for paragraph in info["DESCRIPTION"]],
+                rx.text(
+                    "For more information, check the ",
+                    rx.link(
+                        "info",
+                        href="/project/problem/problem_info"
+                    ),
+                    " section in the project.",
+                    font_family="Oxygen",
+                    font_size="1.5em",
+                    margin="1.5em",
+                ),
+                align="center",
+                padding="5",
+                border_radius=styles.BORDER_RADIUS,
+                background_color=styles.Color.BACKGROUND_SECONDARY,
+                width="80%",
+                height="100%"
+            ),
+            width="100%",
+            height="100%"
+        ),
+        # Include the button
+        __button(),
+        width="100%",
+        height="100%",
+        align="center",
+        justify="center",
     )
 
 
@@ -97,8 +116,9 @@ def __button() -> rx.Component:
         rx.center(
             rx.link(
                 rx.button(
+                    rx.icon("square-arrow-out-up-right"),
                     rx.text(
-                        "Go to project"
+                        "Go to project site"
                     ),
                     size="3",
                     border_radius=styles.BORDER_RADIUS,
@@ -106,10 +126,24 @@ def __button() -> rx.Component:
                     border_color=styles.Color.PRIMARY,
                     background_color="transparent",
                     cursor="pointer",
+                    transition="all 0.15s ease-out allow-discrete",
+                    _hover={
+                        "background": rx.color("green", shade=5)
+                    }
                 ),
                 href="/project/cashier_data"
             )
         ),
         width="100%",
+        height="100%",
         margin_top="1.5em"
+    )
+
+
+def __footer() -> rx.Component:
+    """Footer section"""
+    return rx.center(
+        rx.text("Project made with effort and help of Gato"),
+        width="100%",
+        height="100%"
     )
