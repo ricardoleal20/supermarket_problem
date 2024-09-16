@@ -16,8 +16,8 @@ class Cashier:
     """
     name: str
     available_in_the_morning: bool
-    available_in_the_morning: bool
-    effectiveness_range: float
+    available_in_the_afternoon: bool
+    effectiveness_average: float
 
     def __repr__(self) -> str:
         return f"Cashier ID: {self.name}"
@@ -32,18 +32,19 @@ class Client:
 
     Since the supermarket is open from 8 am to 8 pm, we know that we
     have only 12 hours of usage in the supermarket. We allow the clients
-    to arrival per minute, so it's easy to us to represent the client arrival time
+    to arrive per minute, so it's easy to us to represent the client arrival time
     as an integer, telling us the minute that they arrive.
 
     For example, if the arrival time is 60, then we know that they arrive to the queue at
-    9 am. If the arrivl time is 172, then we know that they arrive at 10:52 am.
+    9 am. If the arrival time is 172, then we know that they arrive at 10:52 am.
     """
     id: int
     arrival_time: int
     products: int
 
     def __repr__(self) -> str:
-        return f"Client {self.id}, arriving at {self.arrival_date} with {self.products} to shop"
+        return f"Client {self.id}, arriving at {self.arrival_date}" +\
+            f" with {self.products} products to shop"
 
     @property
     def arrival_date(self) -> str:
