@@ -67,6 +67,7 @@
 *.sage.py
 *.so
 *.spec
+.DS_STORE
 .Python
 .cache
 .coverage
@@ -92,6 +93,7 @@
 .spyproject
 .tox/
 .venv
+.vscode/
 .web
 .webassets-cache
 /site
@@ -134,5 +136,3 @@ var/
 venv.bak/
 venv/
 wheels/
-.vscode/
-.DS_STORE
