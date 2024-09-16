@@ -12,6 +12,7 @@ pymath_compute = "~=0.3.0"
 pydash = "~=8.0.1"
 plotly = "~=5.23.0"
 pandas = "~=2.2.2"
+ortools = "~=9.11.4210"
 
 [tool.poetry.dev-dependencies]
 reflex = "~=0.5.7"
