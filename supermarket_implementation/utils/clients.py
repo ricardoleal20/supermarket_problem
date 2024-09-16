@@ -6,7 +6,7 @@ import typing as tp
 # External imports
 import numpy as np
 # Local imports
-from supermarket_problem.models import Client
+from supermarket_implementation.models import Client
 
 
 def generate_clients_based_on_poisson(
