@@ -76,8 +76,8 @@ class SolutionVar:
     client: Client
     start: cp_model.IntVar
     end: cp_model.IntVar
-    duration: cp_model.IntVar
+    duration: int
     active: cp_model.BoolVarT
 
     def __repr__(self) -> str:
-        return f"(SolverVar::{self.cashier.name}|-->Active={self.active})"
+        return f"SolverVar::{self.cashier.name}|-->Active={self.active}"
