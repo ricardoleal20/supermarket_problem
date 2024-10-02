@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// React imports
+// import { useState } from 'react'
+// Import react props //
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// Import some materials utilities
+import { ThemeProvider, CssBaseline } from '@mui/material';
+// Pages imports
+import Home from "./pages";
+import NotFound from "./pages/not_found";
+// Other Local imports
+import { theme } from "./theme";
+
+// Add the 
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  // Return the routes section for the page
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <ThemeProvider theme={theme()}>
+      <CssBaseline />
+      <div className="app">
+        <main className="content">
+          <Router>
+            <Routes>
+              {/* Route for the index page*/}
+              <Route
+                path="/"
+                element={<Home />}
+              />
+              {/* Import the 404 route */}
+              <Route
+                path="*"
+                element={<NotFound />}
+              />
+            </Routes>
+          </Router>
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </ThemeProvider>
   )
 }
 
-export default App
+export default App;
