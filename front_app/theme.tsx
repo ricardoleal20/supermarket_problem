@@ -69,6 +69,7 @@ export const theme = () => {
     const colors = colorTokens();
     return createTheme({
         palette: {
+            mode: "dark",
             // ================ //
             // COLORS FOR DARK //
             // ================ //
@@ -115,5 +116,16 @@ export const theme = () => {
                 fontSize: 14,
             }
         },
+        /* Create the component theme */
+        components: {
+            MuiDrawer: {
+                styleOverrides: {
+                    paper: {
+                        backgroundColor: colors.primary[400],
+                        color: "white"
+                    }
+                }
+            }
+        }
     })
 }

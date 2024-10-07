@@ -1,12 +1,13 @@
 // React imports
 // import { useState } from 'react'
 // Import react props //
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 // Import some materials utilities
 import { ThemeProvider, CssBaseline } from '@mui/material';
 // Pages imports
 import Home from "./pages";
 import NotFound from "./pages/not_found";
+import CashierData from "./pages/interface/cashier";
 // Other Local imports
 import { theme } from "./theme";
 
@@ -31,6 +32,10 @@ function App() {
                 path="*"
                 element={<NotFound />}
               />
+              {/* ============================= */}
+              {/* Interfaces PAGES */}
+              <Route path="/interface" element={<Navigate to="/interface/cashier_data" />} />
+              <Route path="/interface/cashier_data" element={<CashierData />} />
             </Routes>
           </Router>
         </main>
