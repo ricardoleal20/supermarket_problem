@@ -8,12 +8,16 @@
 // Mui imports
 import Typography from '@mui/material/Typography';
 // Local improts
-import { PageTemplate, AvailablePages } from "../../components/PageTemplate";
+import { PageTemplate, AvailablePages, PageChildrenProps } from "../../components/PageTemplate";
 
-const CashierData = () => {
+
+
+const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     return (
         <PageTemplate
             page={AvailablePages.CashierData}
+            open={open}
+            setOpen={setOpen}
         >
             <Typography variant="h3">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

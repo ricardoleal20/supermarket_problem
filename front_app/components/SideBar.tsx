@@ -108,6 +108,9 @@ interface SidebarProps {
     sidebarElements: CallableFunction
     // Use the children to be placed inside the info
     children: React.ReactNode
+    // Add the open and setOpen props
+    open: boolean,
+    setOpen: CallableFunction
     // Title of the header and the sidebar. Both optional
     // since we can put something on it, or nothing on it
     headerTitle?: string
@@ -122,13 +125,16 @@ const SideBar: React.FC<SidebarProps> = ({
     selected,
     sidebarElements,
     children,
+    // Add the open props
+    open,
+    setOpen,
+    // Add the setOpen sidebar and the setClose element
     // Optional items
     headerTitle = "",
     sidebarTitle = "",
     customButtonHeader = null
 }) => {
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -171,10 +177,11 @@ const SideBar: React.FC<SidebarProps> = ({
                         {theme.direction === 'rtl' ? <ChevronRightIcon /> : <MenuOpenIconOutlined />}
                     </IconButton>
                 </DrawerHeader>
-                <Divider />
+                {/* Put the sidebar elements here as part of the sidebar*/}
                 {sidebarElements(open, selected)}
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                {/* Put the children elements, the things that are going to go inside the sidebar... */}
                 <DrawerHeader />
                 {children}
             </Box>
