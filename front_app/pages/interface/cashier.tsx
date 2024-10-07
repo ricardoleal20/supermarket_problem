@@ -5,20 +5,23 @@
 // * backend to perform the calculations in our pre-made model.
 // ===========================
 // React imports
-// Material UI imports
-import { Box, Typography } from "@mui/material";
+// Mui imports
+import Typography from '@mui/material/Typography';
 // Local improts
-import Sidebar from "../../components/SideBar";
+import { PageTemplate, AvailablePages } from "../../components/PageTemplate";
 
 const CashierData = () => {
     return (
-        <Box>
-            {/* Initialize the Sidebar */}
-            <Sidebar />
-            <Box component="main" sx={{ flexGrow: 1, padding: 3 }}>
-                <Typography variant="h1">TEST</Typography>
-            </Box>
-        </Box>
+        <PageTemplate
+            page={AvailablePages.CashierData}
+        >
+            <Typography variant="h3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </Typography>
+        </PageTemplate>
     )
 }
 
