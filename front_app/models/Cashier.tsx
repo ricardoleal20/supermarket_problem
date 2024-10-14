@@ -31,7 +31,7 @@ export default class Cashier implements DataTableModel, CashierInterface {
     ) { }
 
     // Method to return the columns from the model
-    private static getColumns(): GridColDef[] {
+    private static getFieldsInformation(): GridColDef[] {
         return [
             // Hide the ID column
             { field: "id", headerName: "ID" },
@@ -45,7 +45,8 @@ export default class Cashier implements DataTableModel, CashierInterface {
                             <BadgeOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Worker ID
                         </Box>
                     </Typography>
-                )
+                ),
+                labelIcon: () => (<BadgeOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
                 field: 'available_in_the_morning',
@@ -58,7 +59,8 @@ export default class Cashier implements DataTableModel, CashierInterface {
                             <LightModeOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Available in the morning
                         </Box>
                     </Typography>
-                )
+                ),
+                labelIcon: () => (<LightModeOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
                 field: 'available_in_the_afternoon',
@@ -71,7 +73,8 @@ export default class Cashier implements DataTableModel, CashierInterface {
                             <ModeNightOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Available in the afternoon
                         </Box>
                     </Typography>
-                )
+                ),
+                labelIcon: () => (<ModeNightOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
                 field: 'effectiveness_average',
@@ -84,16 +87,17 @@ export default class Cashier implements DataTableModel, CashierInterface {
                             <PercentOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Effectiveness Average
                         </Box>
                     </Typography>
-                )
+                ),
+                labelIcon: () => (<PercentOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
         ];
     }
 
-    generateColumns() {
-        return Cashier.getColumns();
+    getFieldsInfo() {
+        return Cashier.getFieldsInformation();
     }
 
-    static generateColumns() {
-        return Cashier.getColumns();
+    static getFieldsInfo() {
+        return Cashier.getFieldsInformation();
     }
 }

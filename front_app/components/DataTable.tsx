@@ -1,5 +1,5 @@
 // MUI imports
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     DataGrid, GridColDef, GridRowsProp, GridRowModesModel,
     GridToolbarContainer, GridSlots, GridActionsCellItem,
@@ -8,7 +8,7 @@ import {
 } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, TextField } from '@mui/material';
+import { DialogContent, DialogActions, Dialog, TextField, Typography, Box } from '@mui/material';
 // Include the alert imports
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
@@ -18,8 +18,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // Local imports
+import { colorTokens } from '../theme';
 
 const paginationModel = { page: 0, pageSize: 5 };
 
@@ -30,9 +31,12 @@ interface HashSet<T = any> {
     [key: string]: T; // With this, i know that the entries are going to be string but the response can be anything!
 }
 
+export type FieldsInfo = HashSet | GridColDef;
+
+
 export interface DataTableModel {
     id: GridRowId;
-    generateColumns: () => GridColDef[];
+    getFieldsInfo: () => GridColDef[];
 }
 
 interface DataTableProps {
@@ -55,46 +59,112 @@ interface EditToolbarProps {
 // Dialog Component to add (or modify)  an item  //
 // ********************************************* //
 
-function ItemDialog(props: { open: boolean, handleClose: CallableFunction, handleSave: CallableFunction, model: DataTableModel, data?: HashSet }) {
+function ItemDialog(
+    props: {
+        open: boolean,
+        handleClose: CallableFunction,
+        handleSave: CallableFunction,
+        model: DataTableModel,
+        data?: HashSet
+    }
+) {
+    const colors = colorTokens();
+    // Create a local state to store the form values
+    const [formValues, setFormValues] = useState<{ [key: string]: any }>({});
+
+    // When the dialog gets open, we'll initialize the state with the data provided (if it exists)
+    useEffect(() => {
+        if (props.data) {
+            setFormValues(props.data);
+        } else {
+            // Si no hay datos, inicializa el estado con campos vacíos
+            const initialValues: { [key: string]: any } = {};
+            props.model.getFieldsInfo().forEach(column => {
+                initialValues[column.field] = '';  // Initial value of each field
+            });
+            setFormValues(initialValues);
+        }
+    }, [props.data, props.model]);
+
+    // Function to manage the input change for each one of the fields
+    const handleInputChange = (field: string, value: any) => {
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [field]: value
+        }));
+    };
+
     return (
         <Dialog open={props.open} onClose={() => props.handleClose()}>
-            <DialogTitle>Item</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Include the information for the item
-                </DialogContentText>
-                {/* Include automatically the fields from the model provided for the table */}
-                {props.model.generateColumns().map((column) => (
-                    <TextField
-                        key={column.field}
-                        autoFocus
-                        margin="dense"
-                        id={column.field}
-                        label={column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
-                        type={column.type || "text"}
-                        fullWidth
-                        variant="standard"
-                        defaultValue={props.data ? props.data[column.field] : ''}
-                    />
-                ))}
+            {/* Define a box to show the dialog title and an icon */}
+            <Box sx={{ marginTop: "1.5em", marginLeft: "1.5em", }}>
+                <Typography variant="h2" sx={{ color: colors.primary[100] }}>
+                    <Box display="flex" alignItems="center">
+                        <Box alignItems="center" sx={{ borderRadius: "50%", backgroundColor: colors.greenAccent[800], marginRight: "0.3em" }}>
+                            <EditOutlinedIcon
+                                fontSize="large"
+                                style={{
+                                    marginRight: "0.25em",
+                                    marginLeft: "0.25em",
+                                    marginTop: "0.25em",
+                                    marginBottom: "0.25em",
+                                    color: colors.greenAccent[500]
+                                }} />
+                        </Box>
+                        <Box display="flex" flexDirection="column">
+                            <Typography variant="h3">Add Item</Typography>
+                            <Typography variant="h5" sx={{ color: colors.grey[300] }}>Include item information</Typography>
+                        </Box>
+                    </Box>
+                </Typography>
+            </Box>
+
+            <DialogContent sx={{ minWidth: "40em", backgroundColor: colors.primary[500] }}>
+
+                {/* Automatically render the fields based on the model columns */}
+                {props.model.getFieldsInfo()
+                    .filter((column) => column.field !== 'id')
+                    .map((column) => (
+                        <div key={column.field}>
+                            <Typography variant="h5" marginTop="0.5em">
+                                {column.labelIcon ? column.labelIcon() : null}
+                                {column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
+                            </Typography>
+                            <TextField
+                                margin="dense"
+                                color="secondary"
+                                id={column.field}
+                                type={column.type || "text"}
+                                placeholder={column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
+                                fullWidth
+                                variant="outlined"
+                                value={formValues[column.field] || ''}
+                                onChange={(e) => handleInputChange(column.field, e.target.value)}
+                                sx={{
+                                    '& .MuiFilledInput-root': {
+                                        borderRadius: '50%',
+                                    },
+                                }}
+                            />
+                        </div>
+                    ))}
             </DialogContent>
-            <DialogActions>
-                {/* Add the buttons to save or cancel the action */}
-                <Button startIcon={<CancelIcon />} onClick={() => props.handleClose()}>Cancel</Button>
-                <Button startIcon={<SaveIcon />} onClick={() => {
-                    const newItem: { [key: string]: any } = {};
-                    props.model.generateColumns().forEach(column => {
-                        const inputElement = document.getElementById(column.field) as HTMLInputElement;
-                        if (inputElement) {
-                            newItem[column.field] = inputElement.value;
-                        }
-                    });
-                    props.handleSave(newItem);
+            <DialogActions sx={{ backgroundColor: colors.primary[500] }}>
+                {/* Botons to decide the action to consider for the dialog */}
+                <Button startIcon={<CancelIcon />} sx={{
+                    border: 0, borderRadius: 1, backgroundColor: colors.grey[800], color: colors.primary[100]
+                }} onClick={() => props.handleClose()}>Cancel</Button>
+                <Button startIcon={<SaveIcon />} sx={{
+                    border: 0, borderRadius: 1, backgroundColor: colors.greenAccent[700], color: colors.primary[800]
+                }} onClick={() => {
+                    console.log("Save the item", formValues);
+                    props.handleSave(formValues);  // Pass the sate to the handleSave method
                 }}>Save</Button>
             </DialogActions>
         </Dialog>
     )
 }
+
 
 // This EditToolBar is the method to add an item
 function EditToolbar(props: EditToolbarProps) {
@@ -169,6 +239,27 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
         setTimeout(() => props.handleSave(data), 3000);
     };
 
+    // Create the save method for the delete click method
+    const saveEditMethod = (newData: HashSet) => {
+        // Find the index of the model that we're going to modify
+        const index = props.data.findIndex((row) => row.id === newData.id);
+        console.log("Index: ", index, newData.id, props.data[0].id, newData);
+        if (index !== -1) {
+            console.log("Mmmm apoco si?");
+            // Create a copy of the data array
+            const updatedData = [...props.data];
+            // Replace the old data with the new data at the found index
+            updatedData[index] = {
+                ...updatedData[index],
+                ...newData
+            };
+            // Update the data internally, replacing the original data model
+            props.handleSave(updatedData);
+        }
+        // Also, close the dialog
+        handleClose();
+    }
+
     return {
         field: 'actions',
         type: 'actions',
@@ -193,7 +284,7 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
                 <ItemDialog
                     open={open}
                     handleClose={handleClose}
-                    handleSave={props.handleSave}
+                    handleSave={saveEditMethod}
                     model={props.model}
                     data={params.row}
                 />
@@ -217,7 +308,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     setData,
     isEditable
 }) => {
-    const columns = model.generateColumns();
+    const columns = model.getFieldsInfo();
     // If this data is editable, then I'll add the Edit mode to the columns
     if (isEditable && setData) {
         columns.push(EditMode({ data, handleSave: setData, model }));
