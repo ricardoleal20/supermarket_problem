@@ -39,6 +39,7 @@ export default class Cashier implements DataTableModel, CashierInterface {
                 field: 'workerId',
                 headerName: 'Worker ID',
                 type: "string",
+                flex: 1,
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center">
@@ -52,7 +53,8 @@ export default class Cashier implements DataTableModel, CashierInterface {
                 field: 'available_in_the_morning',
                 headerName: 'Available in the morning',
                 type: "boolean",
-                width: 200,
+                // width: 200,
+                flex: 1,
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center">
@@ -66,7 +68,8 @@ export default class Cashier implements DataTableModel, CashierInterface {
                 field: 'available_in_the_afternoon',
                 headerName: 'Available in the afternoon',
                 type: "boolean",
-                width: 200,
+                // width: 200,
+                flex: 1,
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center">
@@ -80,7 +83,7 @@ export default class Cashier implements DataTableModel, CashierInterface {
                 field: 'effectiveness_average',
                 headerName: 'Effectiveness Average',
                 type: "number",
-                width: 200,
+                flex: 1,
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center">
@@ -89,6 +92,7 @@ export default class Cashier implements DataTableModel, CashierInterface {
                     </Typography>
                 ),
                 labelIcon: () => (<PercentOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
+                rangeValues: { min: 0.1, max: 1.0 },
             },
         ];
     }

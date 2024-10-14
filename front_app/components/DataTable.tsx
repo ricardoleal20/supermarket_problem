@@ -8,10 +8,16 @@ import {
 } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import { DialogContent, DialogActions, Dialog, TextField, Typography, Box } from '@mui/material';
+import {
+    DialogContent, DialogActions, Dialog,
+    TextField, Typography, Box, Checkbox
+} from '@mui/material';
+import Divider from '@mui/material/Divider';
+
 // Include the alert imports
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+
 // Import icons
 import AddOutlinedIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit';
@@ -97,7 +103,7 @@ function ItemDialog(
     return (
         <Dialog open={props.open} onClose={() => props.handleClose()}>
             {/* Define a box to show the dialog title and an icon */}
-            <Box sx={{ marginTop: "1.5em", marginLeft: "1.5em", }}>
+            <Box sx={{ marginTop: "1.5em", marginLeft: "1.5em", marginBottom: "1em" }}>
                 <Typography variant="h2" sx={{ color: colors.primary[100] }}>
                     <Box display="flex" alignItems="center">
                         <Box alignItems="center" sx={{ borderRadius: "50%", backgroundColor: colors.greenAccent[800], marginRight: "0.3em" }}>
@@ -118,7 +124,9 @@ function ItemDialog(
                     </Box>
                 </Typography>
             </Box>
-
+            {/* Add the divider */}
+            <Divider />
+            {/* Add the content of the dialog */}
             <DialogContent sx={{ minWidth: "40em", backgroundColor: colors.primary[500] }}>
 
                 {/* Automatically render the fields based on the model columns */}
@@ -130,22 +138,57 @@ function ItemDialog(
                                 {column.labelIcon ? column.labelIcon() : null}
                                 {column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
                             </Typography>
-                            <TextField
-                                margin="dense"
-                                color="secondary"
-                                id={column.field}
-                                type={column.type || "text"}
-                                placeholder={column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
-                                fullWidth
-                                variant="outlined"
-                                value={formValues[column.field] || ''}
-                                onChange={(e) => handleInputChange(column.field, e.target.value)}
-                                sx={{
-                                    '& .MuiFilledInput-root': {
-                                        borderRadius: '50%',
-                                    },
-                                }}
-                            />
+                            {/* 
+                                Now, based on the possible options from the type, we'll select if we
+                                return a text field, a number field, a boolean field, etc.
+                            */}
+                            {column.type === 'boolean' ? (
+                                <Checkbox
+                                    color="secondary"
+                                    size="large"
+                                    checked={formValues[column.field] || false}
+                                    onChange={(e) => handleInputChange(column.field, e.target.checked)}
+                                />
+                            ) : column.type === 'number' ? (
+                                <TextField
+                                    margin="dense"
+                                    color="secondary"
+                                    id={column.field}
+                                    type="number"
+                                    placeholder={column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
+                                    fullWidth
+                                    variant="outlined"
+                                    value={formValues[column.field] || ''}
+                                    onChange={(e) => handleInputChange(column.field, e.target.value)}
+                                    inputProps={{
+                                        step: 0.1,
+                                        min: column.rangeValues?.min,
+                                        max: column.rangeValues?.max
+                                    }}
+                                    sx={{
+                                        '& .MuiFilledInput-root': {
+                                            borderRadius: '50%',
+                                        },
+                                    }}
+                                />
+                            ) : (
+                                <TextField
+                                    margin="dense"
+                                    color="secondary"
+                                    id={column.field}
+                                    type={column.type || "text"}
+                                    placeholder={column.headerName || column.field.charAt(0).toUpperCase() + column.field.slice(1)}
+                                    fullWidth
+                                    variant="outlined"
+                                    value={formValues[column.field] || ''}
+                                    onChange={(e) => handleInputChange(column.field, e.target.value)}
+                                    sx={{
+                                        '& .MuiFilledInput-root': {
+                                            borderRadius: '50%',
+                                        },
+                                    }}
+                                />
+                            )}
                         </div>
                     ))}
             </DialogContent>
@@ -157,7 +200,6 @@ function ItemDialog(
                 <Button startIcon={<SaveIcon />} sx={{
                     border: 0, borderRadius: 1, backgroundColor: colors.greenAccent[700], color: colors.primary[800]
                 }} onClick={() => {
-                    console.log("Save the item", formValues);
                     props.handleSave(formValues);  // Pass the sate to the handleSave method
                 }}>Save</Button>
             </DialogActions>
@@ -169,7 +211,7 @@ function ItemDialog(
 // This EditToolBar is the method to add an item
 function EditToolbar(props: EditToolbarProps) {
     // Set the method to read the rows and elements from the item
-    const { setData, setDataModesModel, model } = props;
+    const { setData, model } = props;
 
     const [open, setOpen] = React.useState(false);
 
@@ -314,8 +356,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         columns.push(EditMode({ data, handleSave: setData, model }));
     }
     // Create an state for the rowModes
-    const [dataModesModel, setDataModesModel] = React.useState<GridRowModesModel>({});
-
+    // const [dataModesModel, setDataModesModel] = React.useState<GridRowModesModel>({});
 
     // The setData is the method we use to modify the data IN CASE that we have to do so
     // (as, for example, delete an entry or modify an entry)
@@ -331,7 +372,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     toolbar: EditToolbar as GridSlots['toolbar'],
                 }}
                 slotProps={{
-                    toolbar: { setData, setDataModesModel, model }
+                    toolbar: { setData, model }
                 }}
                 sx={{
                     border: 0.1,
