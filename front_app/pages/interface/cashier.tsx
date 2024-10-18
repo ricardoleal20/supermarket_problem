@@ -5,6 +5,7 @@
 // * backend to perform the calculations in our pre-made model.
 // ===========================
 // React imports
+import React from 'react';
 // Mui imports
 import Typography from '@mui/material/Typography';
 // Local improts
@@ -12,6 +13,13 @@ import { PageTemplate, AvailablePages, PageChildrenProps } from "../../component
 import { DataTable } from '../../components/DataTable';
 import { useState } from 'react';
 import { Cashier } from '../../models';
+// Include the accordion for information about the model
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+
 
 
 const rawData: Cashier[] = [
@@ -25,6 +33,12 @@ const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
 
     // Get the data
     const [data, setData] = useState(rawData);
+    // Select if the accordion is expanded or not
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleExpansion = () => {
+        setExpanded((prevExpanded) => !prevExpanded);
+    };
 
     return (
         <PageTemplate
@@ -32,11 +46,8 @@ const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             open={open}
             setOpen={setOpen}
         >
-            <Typography variant="h4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            <Typography variant="h5">
+                Select the cashiers to consider as the main processors for the clients in the final solution.
             </Typography>
             {/* Add the table for the cashier data */}
             <DataTable
@@ -45,6 +56,61 @@ const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 setData={setData}
                 isEditable={true}
             />
+            {/* Include the accordion with information about each parameter of the cashier */}
+            <Accordion
+                expanded={expanded}
+                onChange={handleExpansion}
+                slotProps={{ transition: { timeout: 400 } }}
+                sx={[
+                    { marginTop: "1em" },
+                    expanded
+                        ? {
+                            '& .MuiAccordion-region': {
+                                height: 'auto',
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'block',
+                            },
+                        }
+                        : {
+                            '& .MuiAccordion-region': {
+                                height: 0,
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'none',
+                            },
+                        },
+                ]}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                >
+                    <Typography>Detailed information about each column</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Typography variant="h6">
+                        <ul>
+                            <li>
+                                <strong>Worker ID:</strong> The ID of the worker. Just as a reference for the results.
+                            </li>
+                            <li>
+                                <strong>Available in the morning:</strong> If the worker is available in the morning.
+                                This would allow us to put clients on the morning shift (from 8 A.M. to 2 P.M.)
+                            </li>
+                            <li>
+                                <strong>Available in the afternoon:</strong> If the worker is available in the afternoon.
+                                This would allow us to put clients on the afternoon shift (from 2 P.M. to 8 P.M.)
+                            </li>
+                            <li>
+                                <strong>Effectiveness average:</strong> The average of the effectiveness of the worker.
+                                If it is higher, means that can process better the clients and their products.
+                                If it is lower, means that would take it more time to attend a client.</li>
+                        </ul>
+                    </Typography>
+                </AccordionDetails>
+            </Accordion>
         </PageTemplate>
     )
 }
