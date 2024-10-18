@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
     DataGrid, GridColDef, GridRowsProp, GridRowModesModel,
     GridToolbarContainer, GridSlots, GridActionsCellItem,
-    GridValidRowModel,
-    GridRowId
+    GridValidRowModel, GridToolbarExport, GridRowId
 } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -245,6 +244,30 @@ function EditToolbar(props: EditToolbarProps) {
                     onClick={handleClickOpen}>
                     Add item
                 </Button>
+                {/* Add the export container */}
+                <GridToolbarExport
+                    printOptions={{ disableToolbarButton: true }}
+                    sx={{
+                        backgroundColor: colorTokens().greenAccent[500],
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: colorTokens().greenAccent[700],
+                        },
+                        '& .MuiButton-startIcon': {
+                            color: 'white',
+                        },
+                    }}
+                    style={{
+                        backgroundColor: colorTokens().greenAccent[500],
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: colorTokens().greenAccent[700],
+                        },
+                        '& .MuiButton-startIcon': {
+                            color: 'white',
+                        },
+                    }}
+                />
             </GridToolbarContainer>
             {/* Add the dialog to add an item */}
             <ItemDialog
@@ -264,13 +287,16 @@ function EditToolbar(props: EditToolbarProps) {
 function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction, model: DataTableModel }): GridColDef {
     const [open, setOpen] = React.useState(false);
     const [alertOpen, setAlertOpen] = React.useState(false);
+    const [currentRow, setCurrentRow] = React.useState<DataTableModel | null>(null);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (row: DataTableModel) => {
+        setCurrentRow(row);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setCurrentRow(null);
     };
 
     const handleDeleteClick = (id: GridRowId) => {
@@ -285,9 +311,7 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
     const saveEditMethod = (newData: HashSet) => {
         // Find the index of the model that we're going to modify
         const index = props.data.findIndex((row) => row.id === newData.id);
-        console.log("Index: ", index, newData.id, props.data[0].id, newData);
         if (index !== -1) {
-            console.log("Mmmm apoco si?");
             // Create a copy of the data array
             const updatedData = [...props.data];
             // Replace the old data with the new data at the found index
@@ -314,7 +338,7 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
                     icon={<EditIcon />}
                     label="Edit"
                     className="textPrimary"
-                    onClick={handleClickOpen}
+                    onClick={() => handleClickOpen(params.row)}
                     color="inherit"
                 />
                 <GridActionsCellItem
@@ -323,13 +347,15 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
                     onClick={() => handleDeleteClick(params.id)}
                     color="inherit"
                 />
-                <ItemDialog
-                    open={open}
-                    handleClose={handleClose}
-                    handleSave={saveEditMethod}
-                    model={props.model}
-                    data={params.row}
-                />
+                {currentRow && (
+                    <ItemDialog
+                        open={open}
+                        handleClose={handleClose}
+                        handleSave={saveEditMethod}
+                        model={props.model}
+                        data={currentRow}
+                    />
+                )}
                 {alertOpen && (
                     <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', zIndex: 9999 }}>
                         <Stack sx={{ width: '100%' }} spacing={2}>
@@ -350,6 +376,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     setData,
     isEditable
 }) => {
+    // Include the colors
+    const colors = colorTokens();
     const columns = model.getFieldsInfo();
     // If this data is editable, then I'll add the Edit mode to the columns
     if (isEditable && setData) {
@@ -366,18 +394,34 @@ export const DataTable: React.FC<DataTableProps> = ({
                 rows={data}
                 columns={columns}
                 initialState={{ pagination: { paginationModel }, columns: { columnVisibilityModel: { id: false } } }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[5, 10, 15, 20]}
                 editMode='row'
                 slots={{
                     toolbar: EditToolbar as GridSlots['toolbar'],
                 }}
                 slotProps={{
-                    toolbar: { setData, model }
+                    toolbar: {
+                        setData, model,
+                        // printOptions: {
+                        //     disableToolbarButton: true
+                        // },
+                        printOptions: { disableToolbarButton: true }
+                    },
+                    pagination: {
+                        labelRowsPerPage: "Limit"
+                    }
                 }}
                 sx={{
                     border: 0.1,
                     borderColor: "#666666", // This color make the border better looking
-                    borderRadius: "1em"
+                    borderRadius: "1em",
+                    '& .MuiDataGrid-footerContainer': {
+                        backgroundColor: colors.primary[500],
+                    },
+                }}
+                localeText={{
+                    noRowsLabel: "No data to show. Please include an item.",
+                    footerRowSelected: () => ``,
                 }}
             />
         </Paper>
