@@ -45,6 +45,8 @@ interface PageTemplateProps {
     // Add the open and set open props
     open: boolean,
     setOpen: CallableFunction,
+    // Add the custom button header section
+    customButtonHeader?: React.ReactNode
     // Add the children
     children: React.ReactNode
 };
@@ -193,7 +195,8 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
     page,
     children,
     open,
-    setOpen
+    setOpen,
+    customButtonHeader = null
 }) => {
     return (
         // Start the sidebar
@@ -203,6 +206,7 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
             sidebarElements={SidebarElements}
             open={open}
             setOpen={setOpen}
+            customButtonHeader={customButtonHeader}
         >
             {children}
         </Sidebar>

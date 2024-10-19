@@ -166,7 +166,12 @@ const SideBar: React.FC<SidebarProps> = ({
                         {headerTitle}
                     </Typography>
                     {/* Add items ONLY if they're available */}
-                    {customButtonHeader}
+                    <Box sx={{ flexGrow: 1 }} />
+                    {customButtonHeader && (
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                            {customButtonHeader}
+                        </Box>
+                    )}
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

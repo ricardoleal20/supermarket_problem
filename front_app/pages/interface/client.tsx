@@ -1,0 +1,240 @@
+//*  Cashier Page
+// *
+// * This page contains a datatable with the configuration to send for the user to pre-define the
+// * available cashiers in the project, being these the ones that we're going to send to the
+// * backend to perform the calculations in our pre-made model.
+// ===========================
+// React imports
+import React from 'react';
+// Mui imports
+import Typography from '@mui/material/Typography';
+// Local improts
+import { PageTemplate, AvailablePages, PageChildrenProps } from "../../components/PageTemplate";
+import { DataTable } from '../../components/DataTable';
+import { useState } from 'react';
+import { Client } from '../../models';
+// Include the accordion for information about the model
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+// Include some icons
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DataArrayOutlinedIcon from '@mui/icons-material/DataArrayOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+// Include the buttons section
+import { TextField, Box, Divider } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+// Include the alerts
+import { enqueueSnackbar } from 'notistack'
+// Local imports
+import { colorTokens } from '../../theme';
+
+
+
+
+const rawData: Client[] = [
+    // new Client(1, 'W001', true, false, 0.8),
+    // new Client(2, 'W002', true, true, 0.9),
+    // new Client(3, 'W003', false, true, 0.7),
+    // new Client(4, 'W004', false, false, 0.95),
+];
+
+const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
+    const colors = colorTokens();
+    // Get the data
+    const [data, setData] = useState(rawData);
+    // Select if the accordion is expanded or not
+    const [expanded, setExpanded] = React.useState(false);
+    // Create the state to handle the alert show
+
+    const handleExpansion = () => {
+        setExpanded((prevExpanded) => !prevExpanded);
+    };
+
+    // Define the morning and afternoon variance
+    const [morningVariance, setMorningVariance] = useState(0.5);
+    const [afternoonVariance, setAfternoonVariance] = useState(0.5);
+    // Define the loading state for the buttons
+    const [loadingCreateDataButton, setLoadingCreateDataButton] = useState(false);
+    const [loadingDeleteButton, setLoadingDeleteButton] = useState(false);
+
+    // Define the method to confirm the data
+    const handleConfirmData = () => {
+        // Show an alert saying that the data was confirmed
+        enqueueSnackbar('Data confirmed', {
+            variant: 'success',
+            autoHideDuration: 3000,
+            preventDuplicate: true,
+            anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            style: {
+                backgroundColor: colors.greenAccent[800],
+            }
+        });
+    };
+
+    // Define the method to generate the random data
+    const handleGenerateRandomData = () => {
+        // Set the loading state as true
+        setLoadingCreateDataButton(true);
+        setTimeout(() => {
+            // Get the current date
+            const currentDate = new Date();
+            // Generate the data
+            const generatedData: Client[] = [];
+            for (let i = 0; i < 10; i++) {
+                const arrivalDate = new Date(currentDate);
+                arrivalDate.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60));
+                const products = Math.floor(Math.random() * 50) + 1;
+                generatedData.push(new Client(i, arrivalDate.toLocaleTimeString(), products));
+            }
+            // Set the data
+            setData(generatedData);
+            setLoadingCreateDataButton(false);
+        }, 2000);
+    }
+
+    const handleCleanData = () => {
+        setLoadingDeleteButton(true);
+        // Wait for 2 seconds
+        setTimeout(() => {
+            // Just set the new data to something empty
+            setData([]);
+            setLoadingDeleteButton(false);
+        }, 1500);
+    }
+
+    // Create the custom button header here
+    const ButtonHeader = (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: "0em" }}>
+            <Box component="form" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
+                <TextField
+                    label="Morning Variance"
+                    variant="outlined"
+                    type="number"
+                    inputProps={{ min: 0, max: 2, step: 0.1 }}
+                    value={morningVariance}
+                    onChange={(e) => setMorningVariance(parseFloat(e.target.value))}
+                    sx={{ minWidth: "8em" }}
+                />
+                <TextField
+                    label="Afternoon Variance"
+                    variant="outlined"
+                    type="number"
+                    inputProps={{ min: 0, max: 2, step: 0.1 }}
+                    value={afternoonVariance}
+                    onChange={(e) => setAfternoonVariance(parseFloat(e.target.value))}
+                    sx={{ minWidth: "8.5em" }}
+                />
+                <LoadingButton
+                    loadingPosition="start"
+                    variant="contained"
+                    loading={loadingCreateDataButton}
+                    startIcon={<DataArrayOutlinedIcon />}
+                    onClick={handleGenerateRandomData}
+                >
+                    Generate Data
+                </LoadingButton>
+                <Typography variant="h1">
+                    |
+                </Typography>
+                <LoadingButton
+                    loadingPosition="start"
+                    variant="contained"
+                    loading={loadingDeleteButton}
+                    startIcon={<DeleteOutlineOutlinedIcon />}
+                    onClick={handleCleanData}
+                >
+                    Clean data
+                </LoadingButton>
+                <Typography variant="h1">
+                    |
+                </Typography>
+                <LoadingButton
+                    loadingPosition="start"
+                    variant="contained"
+                    // loading={loadingDeleteButton}
+                    // startIcon={<DeleteOutlineOutlinedIcon />}
+                    onClick={handleConfirmData}
+                    sx={{ backgroundColor: colors.greenAccent[800] }}
+                >
+                    CONFIRM DATA
+                </LoadingButton>
+            </Box>
+        </Box>
+    );
+
+    return (
+        <PageTemplate
+            page={AvailablePages.Clients}
+            open={open}
+            setOpen={setOpen}
+            customButtonHeader={ButtonHeader}
+        >
+            <Typography variant="h5">
+                Generate a list of clients. For that, we can fill it manually or generate it randomly.
+                For the random generation, we'll use the buttons on the header to define the variance for both shifts.
+            </Typography>
+            {/* Add the buttons to generate the data */}
+
+            {/* Add the table for the Client data */}
+            <DataTable
+                model={Client}
+                data={data}
+                setData={setData}
+                isEditable={true}
+            />
+            {/* Include the accordion with information about each parameter of the Client */}
+            <Accordion
+                expanded={expanded}
+                onChange={handleExpansion}
+                slotProps={{ transition: { timeout: 400 } }}
+                sx={[
+                    { marginTop: "1em" },
+                    expanded
+                        ? {
+                            '& .MuiAccordion-region': {
+                                height: 'auto',
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'block',
+                            },
+                        }
+                        : {
+                            '& .MuiAccordion-region': {
+                                height: 0,
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'none',
+                            },
+                        },
+                ]}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                >
+                    <Typography>Detailed information about each column</Typography>
+                </AccordionSummary>
+                <Divider />
+                <AccordionDetails>
+                    <Typography variant="h6">
+                        <ul>
+                            <li>
+                                <strong>Client ID:</strong> The ID of the client. Just as a reference for the results.
+                            </li>
+                            <li>
+                                <strong>Arrival Date:</strong> The date of arrival to the queue. It's a string with the format "HH:MM".
+                            </li>
+                            <li>
+                                <strong>Quantity of products:</strong> How much products the client is going to buy. It's a number between 1 and 50. For each product, we take in average, 15 seconds to process it.
+                            </li>
+                        </ul>
+                    </Typography>
+                </AccordionDetails>
+            </Accordion>
+        </PageTemplate>
+    )
+}
+
+export default ClientData;
