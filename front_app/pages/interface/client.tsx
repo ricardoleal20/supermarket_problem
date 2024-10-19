@@ -28,16 +28,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { enqueueSnackbar } from 'notistack'
 // Local imports
 import { colorTokens } from '../../theme';
+import { performRequest } from '../../utils';
 
 
-
-
-const rawData: Client[] = [
-    // new Client(1, 'W001', true, false, 0.8),
-    // new Client(2, 'W002', true, true, 0.9),
-    // new Client(3, 'W003', false, true, 0.7),
-    // new Client(4, 'W004', false, false, 0.95),
-];
+const rawData: Client[] = [];
 
 const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     const colors = colorTokens();
@@ -52,8 +46,8 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     };
 
     // Define the morning and afternoon variance
-    const [morningVariance, setMorningVariance] = useState(0.5);
-    const [afternoonVariance, setAfternoonVariance] = useState(0.5);
+    const [morningVariance, setMorningVariance] = useState(15);
+    const [afternoonVariance, setAfternoonVariance] = useState(15);
     // Define the loading state for the buttons
     const [loadingCreateDataButton, setLoadingCreateDataButton] = useState(false);
     const [loadingDeleteButton, setLoadingDeleteButton] = useState(false);
@@ -73,24 +67,30 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     };
 
     // Define the method to generate the random data
-    const handleGenerateRandomData = () => {
+    const handleGenerateRandomData = async () => {
         // Set the loading state as true
         setLoadingCreateDataButton(true);
-        setTimeout(() => {
-            // Get the current date
-            const currentDate = new Date();
-            // Generate the data
-            const generatedData: Client[] = [];
-            for (let i = 0; i < 10; i++) {
-                const arrivalDate = new Date(currentDate);
-                arrivalDate.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60));
-                const products = Math.floor(Math.random() * 50) + 1;
-                generatedData.push(new Client(i, arrivalDate.toLocaleTimeString(), products));
+        // Get the data 
+        const data = await performRequest("generate_clients", "POST", {
+            "morning_variance": morningVariance,
+            "afternoon_variance": afternoonVariance,
+        })
+        // Convert the array of data to the expected type
+        const clients: Client[] = data.map((client: any) => {
+            return {
+                id: client.id,
+                clientId: client.id,
+                arrivalTime: client.arrival_time,
+                products: client.products,
             }
-            // Set the data
-            setData(generatedData);
+        });
+        // Sort the clients by the arrivalTime
+        clients.sort((a, b) => a.arrivalTime - b.arrivalTime);
+        // Set the data and quit the loading state
+        setTimeout(() => {
+            setData(clients);
             setLoadingCreateDataButton(false);
-        }, 2000);
+        }, 1500);
     }
 
     const handleCleanData = () => {
@@ -111,7 +111,7 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                     label="Morning Variance"
                     variant="outlined"
                     type="number"
-                    inputProps={{ min: 0, max: 2, step: 0.1 }}
+                    inputProps={{ min: 10, max: 50, step: 1 }}
                     value={morningVariance}
                     onChange={(e) => setMorningVariance(parseFloat(e.target.value))}
                     sx={{ minWidth: "8em" }}

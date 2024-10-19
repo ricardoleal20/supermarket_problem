@@ -10,11 +10,24 @@ import { DataTableModel } from "../components/DataTable"
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 
+function arrivalTimeToDate(arrivalTime: number): string {
+    const baseHour = 8;
+    // Get the hours and minutes
+    const hours = baseHour + Math.floor(arrivalTime / 60);
+    const minutes = arrivalTime % 60;
+    // Modify the final parameters
+    const timeOfDay = hours < 12 ? "AM" : "PM";
+    const hoursString = hours < 13 ? `${hours}` : `${hours - baseHour}`;
+    const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    // Get the last hour
+    return `${hoursString}:${minutesString} ${timeOfDay}`;
+}
+
 interface ClientInterface {
     /// This interface allow me to define what are I'm going to need
     /// for this model
     clientId: number
-    arrivalDate: string
+    arrivalDate: number
     products: number
 }
 
@@ -23,7 +36,7 @@ export default class Client implements DataTableModel, ClientInterface {
     constructor(
         public id: GridRowId,
         public clientId: number,
-        public arrivalDate: string,
+        public arrivalTime: number,
         public products: number
     ) { }
 
@@ -48,15 +61,23 @@ export default class Client implements DataTableModel, ClientInterface {
                 labelIcon: () => (<NumbersOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
-                field: 'arrivalDate',
+                field: 'arrivalTime',
                 headerName: 'Arrival Date',
-                type: "boolean",
+                type: "string",
+                sortable: true,
                 // width: 200,
                 flex: 1,
                 renderHeader: () => (
                     <Typography>
-                        <Box display="flex" alignItems="center">
+                        <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%' }}>
                             <WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Arrival Date
+                        </Box>
+                    </Typography>
+                ),
+                renderCell: (params) => (
+                    <Typography>
+                        <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%', height: '100%' }}>
+                            {arrivalTimeToDate(params.row.arrivalTime)}
                         </Box>
                     </Typography>
                 ),

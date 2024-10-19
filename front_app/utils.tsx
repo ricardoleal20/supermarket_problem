@@ -26,3 +26,19 @@ export const ColoredLine: React.FC<ColoredLineProps> = ({
     }}
   />
 );
+
+// Create a method to perform a request to an API
+export const performRequest = async (endpoint: string, method: string, body: any) => {
+  const url = "http://localhost:3000/" + endpoint;
+  // Perform the request
+  const response = await fetch(url, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  // Get the data
+  const data = await response.json();
+  return data;
+};
