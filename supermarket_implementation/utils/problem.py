@@ -9,7 +9,7 @@ from supermarket_implementation.models import (
     Client, Cashier, SolutionVar
 )
 
-AVG_PROCESS_TIME_PER_ITEM = 0.5  # minutes
+AVG_PROCESS_TIME_PER_ITEM = 0.25  # minutes
 
 
 def ignite_variables(
