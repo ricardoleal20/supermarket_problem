@@ -22,12 +22,13 @@ class Server:
     """
     _url: str
 
-    def __init__(self,
+    def __init__(self,  # pylint: disable=R0913
                  app: FastAPI,
                  host: str = os.getenv("HOST", "localhost"),
                  port: int = int(os.getenv("PORT", 3000)),
                  log_level: str = os.getenv("LOG_LEVEL", "info"),
-                 reload: bool = False) -> None:
+                 reload: bool = False
+                 ) -> None:
         # Define the url
         self._url = f"http://{host}:{port}"
         # Uvicorn server configuration

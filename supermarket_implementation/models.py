@@ -58,6 +58,14 @@ class Client:
         hour = base_hour + hours
         return f"{hour:02}:{minutes:02}"
 
+    def to_dict(self) -> dict[str, int]:
+        """Convert the client to a dictionary"""
+        return {
+            "id": self.id,
+            "arrival_time": self.arrival_time,
+            "products": self.products
+        }
+
 
 @dataclass
 class SolutionVar:
