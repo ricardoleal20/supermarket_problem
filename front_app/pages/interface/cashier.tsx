@@ -18,6 +18,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// MUI imports
+import { Divider } from '@mui/material';
 
 
 
@@ -89,6 +91,7 @@ const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 >
                     <Typography>Detailed information about each column</Typography>
                 </AccordionSummary>
+                <Divider />
                 <AccordionDetails>
                     <Typography variant="h6">
                         <ul>
