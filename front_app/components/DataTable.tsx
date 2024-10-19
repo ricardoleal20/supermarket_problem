@@ -14,9 +14,7 @@ import {
 import Divider from '@mui/material/Divider';
 
 // Include the alert imports
-import Stack from '@mui/material/Stack';
-import Alert from '@mui/material/Alert';
-
+import { enqueueSnackbar } from 'notistack'
 // Import icons
 import AddOutlinedIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit';
@@ -286,7 +284,6 @@ function EditToolbar(props: EditToolbarProps) {
 // Add the return type as a GridColDef
 function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction, model: DataTableModel }): GridColDef {
     const [open, setOpen] = React.useState(false);
-    const [alertOpen, setAlertOpen] = React.useState(false);
     const [currentRow, setCurrentRow] = React.useState<DataTableModel | null>(null);
 
     const handleClickOpen = (row: DataTableModel) => {
@@ -301,10 +298,14 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
 
     const handleDeleteClick = (id: GridRowId) => {
         const data = props.data.filter((row) => row.id !== id);
-        setAlertOpen(true);
-        setTimeout(() => setAlertOpen(false), 3000); // Hide alert after 3 seconds
-        // Modify the data after those three seconds
-        setTimeout(() => props.handleSave(data), 3000);
+        // Include the alert component to say that the item was deleted
+        enqueueSnackbar('Item was deleted without complications.', {
+            variant: 'info',
+            autoHideDuration: 3000,
+            anchorOrigin: { horizontal: "center", vertical: "bottom" },
+        });
+        // Modify the data with the new filtered one
+        props.handleSave(data)
     };
 
     // Create the save method for the delete click method
@@ -355,13 +356,6 @@ function EditMode(props: { data: DataTableModel[], handleSave: CallableFunction,
                         model={props.model}
                         data={currentRow}
                     />
-                )}
-                {alertOpen && (
-                    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', zIndex: 9999 }}>
-                        <Stack sx={{ width: '100%' }} spacing={2}>
-                            <Alert severity="warning">Item was deleted successfully!</Alert>
-                        </Stack>
-                    </div>
                 )}
             </>
         ),

@@ -5,10 +5,13 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 // Import some materials utilities
 import { ThemeProvider, CssBaseline } from '@mui/material';
+// Include the snackbar from MUI
+import { SnackbarProvider } from 'notistack'
 // Pages imports
 import Home from "./pages";
 import NotFound from "./pages/not_found";
 import CashierData from "./pages/interface/cashier";
+import ClientData from "./pages/interface/client";
 // Other Local imports
 import { theme } from "./theme";
 
@@ -22,6 +25,7 @@ function App() {
     <ThemeProvider theme={theme()}>
       <CssBaseline />
       <div className="app">
+        <SnackbarProvider />
         <main className="content">
           <Router>
             <Routes>
@@ -39,6 +43,7 @@ function App() {
               {/* Interfaces PAGES */}
               <Route path="/interface" element={<Navigate to="/interface/cashier_data" />} />
               <Route path="/interface/cashier_data" element={<CashierData open={open} setOpen={setOpen} />} />
+              <Route path="/interface/clients" element={<ClientData open={open} setOpen={setOpen} />} />
             </Routes>
           </Router>
         </main>
