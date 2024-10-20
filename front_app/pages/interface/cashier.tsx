@@ -19,7 +19,12 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // MUI imports
-import { Divider } from '@mui/material';
+import { Divider, Box, Button } from '@mui/material';
+// Include the alerts
+import { enqueueSnackbar } from 'notistack'
+// Local imports
+import { colorTokens } from '../../theme';
+
 
 
 
@@ -33,8 +38,12 @@ const rawData: Cashier[] = [
 
 const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
 
-    // Get the data
-    const [data, setData] = useState(rawData);
+    const colors = colorTokens();
+    // * First, if the data exist on the session storage, then we can
+    // * use it as the base data for the table
+    const cashierData = JSON.parse(sessionStorage.getItem('cashierData') || "[]");
+
+    const [data, setData] = useState(cashierData.length > 0 ? cashierData : rawData);
     // Select if the accordion is expanded or not
     const [expanded, setExpanded] = React.useState(false);
 
@@ -42,11 +51,44 @@ const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
         setExpanded((prevExpanded) => !prevExpanded);
     };
 
+    // Define the method to confirm the data
+    const handleConfirmData = () => {
+        // Show an alert saying that the data was confirmed
+        enqueueSnackbar('Data confirmed', {
+            variant: 'success',
+            autoHideDuration: 3000,
+            preventDuplicate: true,
+            anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            style: {
+                backgroundColor: colors.greenAccent[800],
+            }
+        });
+        // Then, store the data in the session storage
+        sessionStorage.setItem('cashierData', JSON.stringify(data));
+    };
+
+    const ButtonHeader = (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: "0em" }}>
+            <Box component="form" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
+                <Button
+                    variant="contained"
+                    // loading={loadingDeleteButton}
+                    // startIcon={<DeleteOutlineOutlinedIcon />}
+                    onClick={handleConfirmData}
+                    sx={{ backgroundColor: colors.greenAccent[800] }}
+                >
+                    CONFIRM DATA
+                </Button>
+            </Box>
+        </Box>
+    );
+
     return (
         <PageTemplate
             page={AvailablePages.CashierData}
             open={open}
             setOpen={setOpen}
+            customButtonHeader={ButtonHeader}
         >
             <Typography variant="h5">
                 Select the cashiers to consider as the main processors for the clients in the final solution.
