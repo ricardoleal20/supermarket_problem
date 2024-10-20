@@ -25,7 +25,7 @@ import { colorTokens } from '../theme';
 export enum AvailablePages {
     CashierData = "Cashier Data",
     Clients = "Clients",
-    RunSolver = "Run Problem",
+    RunSolver = "Generate solution",
     FAQ = "FAQ",
     NotFound = "404" // This is not going to be showed in the sidebar, but it's helpful
 }

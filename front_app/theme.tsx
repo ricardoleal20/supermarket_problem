@@ -75,6 +75,7 @@ export const theme = () => {
             // ================ //
             primary: {
                 main: colors.primary[900],
+                contrastText: colors.grey[300],
             },
             secondary: {
                 main: colors.greenAccent[500],
@@ -85,7 +86,7 @@ export const theme = () => {
             // Define the text colors
             text: {
                 primary: colors.grey[100],
-                secondary: colors.greenAccent[500]
+                secondary: colors.greenAccent[500],
             }
         },
         typography: {
