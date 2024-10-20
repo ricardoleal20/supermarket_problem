@@ -40,6 +40,10 @@ class CashierScheduling:
         """Set the cashiers that are available to be in the work schedule for the day"""
         self._cashiers = cashiers
 
+    def set_clients(self, clients: list[Client]) -> None:
+        """Set the cashiers that are available to be in the work schedule for the day"""
+        self._clients = clients
+
     def generate_clients(self, morning_variance: float, afternoon_variance: float) -> list[Client]:
         """Generate the possible clients that are going to attend to the
         supermarket in this day.

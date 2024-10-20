@@ -7,17 +7,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 # Local imports
 from supermarket_implementation.scheduling import CashierScheduling
+from supermarket_implementation.models import Cashier, Client
 from supermarket_implementation.__info__ import (
     APP_NAME, DESCRIPTION, contact, __version__, __license__
 )
 
 # Define the ClientRequest class
 
-
 class ClientRequest(BaseModel):
     """Client Request for the POST method"""
     morning_variance: float
     afternoon_variance: float
+
+
+class SolverRequest(BaseModel):
+    """Solver Request for the POST method"""
+    cashiers: list[dict[str, str | bool | float]]
+    clients: list[dict[str, int]]
+
+
+class SolverResult(BaseModel):
+    """Solver Result to result from the POST method"""
+    solution: list[dict]
 
 class App():  # pylint: disable=R0903
     """Application to handle the backend server for this problem
@@ -75,13 +86,53 @@ class App():  # pylint: disable=R0903
     #    DEFAULT PAGE      #
     # -------------------- #
     async def __default(self) -> dict:
-        return {"message": "This is the default page for the API. To see more options, please go to `/docs`"}
+        return {
+            "message": "This is the default page for the API." +
+            " To see more options, please go to `/docs`"
+        }
 
     # -------------------- #
     #   OTHER ENDPOINTS    #
     # -------------------- #
 
-    # Reemplaza el $SELECTION_PLACEHOLDER$ con el siguiente código
+    async def execute_solver(self, request: SolverRequest) -> SolverResult:
+        """Execute the solver"""
+        # Instance th solver result
+        solution = []
+        # Obtain the cashiers and clients model
+        cashiers = [
+            Cashier(**cashier)  # type: ignore
+            for cashier in request.cashiers
+        ]
+        clients = [
+            Client(
+                id=client["id"],
+                arrival_time=client["arrivalTime"],
+                products=client["products"]
+            )
+            for client in request.clients
+        ]
+        # Set the cashiers
+        self._solver.set_cashiers(cashiers)
+        self._solver.set_clients(clients)
+        # Then, solve the problem
+        self._solver.solve()
+        # Get the solver
+        solver = self._solver.solver
+        # Get the results
+        results = self._solver.results()
+        # Get the solver result
+        solution = [{
+            "processor": var.cashier.name,
+            "task": f"Client {var.client.id}",
+            "start": solver.Value(var.start),
+            "end": solver.Value(var.end),
+            "duration": var.duration,
+            "products": var.client.products
+        } for var in results]
+        # Return the SolverResult
+        return SolverResult(solution=solution)
+
     async def generate_clients(
         self,
         request: ClientRequest
