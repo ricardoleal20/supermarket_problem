@@ -22,7 +22,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DataArrayOutlinedIcon from '@mui/icons-material/DataArrayOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 // Include the buttons section
-import { TextField, Box, Divider } from '@mui/material';
+import { TextField, Box, Divider, Button } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 // Include the alerts
 import { enqueueSnackbar } from 'notistack'
@@ -33,16 +33,27 @@ import { performRequest } from '../../utils';
 
 const rawData: Client[] = [];
 
+// Define the children props for the cleint data, using as base the pageChildren Props
 const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     const colors = colorTokens();
     // Get the data
-    const [data, setData] = useState(rawData);
+    // * First, if the data exist on the session storage, then we can
+    // * use it as the base data for the table
+    const clientData = JSON.parse(sessionStorage.getItem('clientData') || "[]");
+
+    const [data, setData] = useState(clientData.length > 0 ? clientData : rawData);
     // Select if the accordion is expanded or not
     const [expanded, setExpanded] = React.useState(false);
+    const [expandedSecondAccordion, setExpandedSecond] = React.useState(false);
     // Create the state to handle the alert show
 
     const handleExpansion = () => {
         setExpanded((prevExpanded) => !prevExpanded);
+    };
+
+
+    const handleExpansionSecond = () => {
+        setExpandedSecond((prevExpanded) => !prevExpanded);
     };
 
     // Define the morning and afternoon variance
@@ -64,6 +75,8 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 backgroundColor: colors.greenAccent[800],
             }
         });
+        // Then, store the data in the session storage
+        sessionStorage.setItem('clientData', JSON.stringify(data));
     };
 
     // Define the method to generate the random data
@@ -149,8 +162,7 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 <Typography variant="h1">
                     |
                 </Typography>
-                <LoadingButton
-                    loadingPosition="start"
+                <Button
                     variant="contained"
                     // loading={loadingDeleteButton}
                     // startIcon={<DeleteOutlineOutlinedIcon />}
@@ -158,7 +170,7 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                     sx={{ backgroundColor: colors.greenAccent[800] }}
                 >
                     CONFIRM DATA
-                </LoadingButton>
+                </Button>
             </Box>
         </Box>
     );
@@ -228,6 +240,55 @@ const ClientData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                             </li>
                             <li>
                                 <strong>Quantity of products:</strong> How much products the client is going to buy. It's a number between 1 and 50. For each product, we take in average, 15 seconds to process it.
+                            </li>
+                        </ul>
+                    </Typography>
+                </AccordionDetails>
+            </Accordion>
+            {/* Add another accordion with the information about the model */}
+            <Accordion
+                expanded={expandedSecondAccordion}
+                onChange={handleExpansionSecond}
+                slotProps={{ transition: { timeout: 400 } }}
+                sx={[
+                    { marginTop: "1em" },
+                    expandedSecondAccordion
+                        ? {
+                            '& .MuiAccordion-region': {
+                                height: 'auto',
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'block',
+                            },
+                        }
+                        : {
+                            '& .MuiAccordion-region': {
+                                height: 0,
+                            },
+                            '& .MuiAccordionDetails-root': {
+                                display: 'none',
+                            },
+                        },
+                ]}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel2-header"
+                >
+                    <Typography>Detailed information about the variance</Typography>
+                </AccordionSummary>
+                <Divider />
+                <AccordionDetails>
+                    <Typography variant="h6">
+                        The variance, for this model, is how many clients we do expect to find in each
+                        shift, and how far is going to be from an specific time. In this case:
+                        <ul>
+                            <li>
+                                <strong>Morning variance:</strong> The variance for the morning shift.
+                            </li>
+                            <li>
+                                <strong>Afternoon variance:</strong> The variance for the afternoon shift.
                             </li>
                         </ul>
                     </Typography>
