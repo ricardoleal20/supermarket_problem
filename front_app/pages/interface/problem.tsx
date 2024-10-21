@@ -16,6 +16,7 @@ import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import KPICard from '../../components/KPICard';
 // import DataTable from '../../components/DataTable';
 import { BarChartByClients, BarChartData } from "../../components/BarChart";
+import { ScatterGant, ScatterData } from "../../components/ScatterGant";
 // import Gantt from '../../components/Gantt';
 import { CashierPerformance } from '../../models';
 import { PageTemplate, AvailablePages, PageChildrenProps } from "../../components/PageTemplate";
@@ -33,6 +34,7 @@ interface SolutionData {
     avgFreeTime: number;
     serviceLevel: number;
     cashierPerformance: CashierPerformanceByDay;
+    arrivalVsStart: ScatterData[];
     clientPerProducts: BarChartData[]
     ganttSolution: any[];
 }
@@ -56,7 +58,8 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             morning: [],
             afternoon: []
         },
-        clientPerProducts: []
+        clientPerProducts: [],
+        arrivalVsStart: []
     });
 
     // Define the method to handle the execution of the problem
@@ -112,29 +115,30 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             console.log("DATA", data);
             // From this data, just make sure to create a new instance with the
             // cashierPerformance converted to the CashierPerformance model
-            const cashierPerformance = {
-                morning: Object.values(data.cashierPerformance.morning).map((element: any) => {
-                    return new CashierPerformance(
-                        `${element.workerId}_MORNING`,
-                        element.workerId,
-                        element.serviceLevel,
-                        element.avgQueueWaitingTime,
-                        element.avgProcessingTime,
-                        element.avgFreeTime
-                    );
-                }),
-                afternoon: Object.values(data.cashierPerformance.afternoon).map((element: any) => {
-                    return new CashierPerformance(
-                        `${element.workerId}_AFTERNOON`,
-                        element.workerId,
-                        element.serviceLevel,
-                        element.avgQueueWaitingTime,
-                        element.avgProcessingTime,
-                        element.avgFreeTime
-                    );
-                })
-            };
-            data.cashierPerformance = cashierPerformance;
+            // const cashierPerformance = {
+            //     morning: Object.values(data.cashierPerformance.morning).map((element: any) => {
+            //         return new CashierPerformance(
+            //             `${element.workerId}_MORNING`,
+            //             element.workerId,
+            //             element.serviceLevel,
+            //             element.avgQueueWaitingTime,
+            //             element.avgProcessingTime,
+            //             element.avgFreeTime
+            //         );
+            //     }),
+            //     afternoon: Object.values(data.cashierPerformance.afternoon).map((element: any) => {
+            //         return new CashierPerformance(
+            //             `${element.workerId}_AFTERNOON`,
+            //             element.workerId,
+            //             element.serviceLevel,
+            //             element.avgQueueWaitingTime,
+            //             element.avgProcessingTime,
+            //             element.avgFreeTime
+            //         );
+            //     })
+            // };
+            // data.cashierPerformance = cashierPerformance;
+            console.log("DATA BEFORE SET", data);
             setSolutionData(data);
         } catch (error) {
             if (error.response && error.response.status === 500) {
@@ -233,8 +237,8 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                         <BarChartByClients
                             data={solutionData.clientPerProducts}
                         />
-                        <BarChartByClients
-                            data={solutionData.clientPerProducts}
+                        <ScatterGant
+                            data={solutionData.arrivalVsStart}
                         />
                         {/* <DataTable
                             model={CashierPerformance}
