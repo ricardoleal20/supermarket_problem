@@ -14,19 +14,26 @@ import { LoadingButton } from '@mui/lab';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 // Local imports
 import KPICard from '../../components/KPICard';
-import DataTable from '../../components/DataTable';
-import Gantt from '../../components/Gantt';
+// import DataTable from '../../components/DataTable';
+import { BarChartByClients, BarChartData } from "../../components/BarChart";
+// import Gantt from '../../components/Gantt';
 import { CashierPerformance } from '../../models';
 import { PageTemplate, AvailablePages, PageChildrenProps } from "../../components/PageTemplate";
 import { colorTokens } from '../../theme';
 import { performRequest } from '../../utils';
+
+interface CashierPerformanceByDay {
+    morning: CashierPerformance[];
+    afternoon: CashierPerformance[];
+}
 
 interface SolutionData {
     avgQueueWaitingTime: number;
     avgProcessingTime: number;
     avgFreeTime: number;
     serviceLevel: number;
-    cashierPerformance: CashierPerformance[];
+    cashierPerformance: CashierPerformanceByDay;
+    clientPerProducts: BarChartData[]
     ganttSolution: any[];
 }
 
@@ -44,7 +51,12 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
         avgProcessingTime: 0,
         avgFreeTime: 0,
         serviceLevel: 0,
-        ganttSolution: []
+        ganttSolution: [],
+        cashierPerformance: {
+            morning: [],
+            afternoon: []
+        },
+        clientPerProducts: []
     });
 
     // Define the method to handle the execution of the problem
@@ -97,18 +109,31 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 "cashiers": cashierData,
                 "clients": clientData,
             });
+            console.log("DATA", data);
             // From this data, just make sure to create a new instance with the
             // cashierPerformance converted to the CashierPerformance model
-            const cashierPerformance = data.cashierPerformance.map((element: any) => {
-                return new CashierPerformance(
-                    element.id,
-                    element.workerId,
-                    element.serviceLevel,
-                    element.waitingTime,
-                    element.processingTime,
-                    element.freeTime
-                );
-            });
+            const cashierPerformance = {
+                morning: Object.values(data.cashierPerformance.morning).map((element: any) => {
+                    return new CashierPerformance(
+                        `${element.workerId}_MORNING`,
+                        element.workerId,
+                        element.serviceLevel,
+                        element.avgQueueWaitingTime,
+                        element.avgProcessingTime,
+                        element.avgFreeTime
+                    );
+                }),
+                afternoon: Object.values(data.cashierPerformance.afternoon).map((element: any) => {
+                    return new CashierPerformance(
+                        `${element.workerId}_AFTERNOON`,
+                        element.workerId,
+                        element.serviceLevel,
+                        element.avgQueueWaitingTime,
+                        element.avgProcessingTime,
+                        element.avgFreeTime
+                    );
+                })
+            };
             data.cashierPerformance = cashierPerformance;
             setSolutionData(data);
         } catch (error) {
@@ -130,7 +155,7 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             } else {
                 enqueueSnackbar(
                     <Typography>
-                        An unexpected error occurred. Please try again later.
+                        Something went wrong running the solver. Please try again later.
                     </Typography>,
                     {
                         variant: 'error',
@@ -193,7 +218,7 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                         <KPICard title="Average Queue Waiting Time" value={solutionData.avgQueueWaitingTime} description="How much minutes do each client wait on the queue to start being processed?" />
                         <KPICard title="Average Processing Time" value={solutionData.avgProcessingTime} description="How much minutes do each client takes to get into the queue and to be processed?" />
                         <KPICard title="Average free-time on the cashiers" value={solutionData.avgFreeTime} description="Average dead-time between the cashiers" />
-                        <KPICard title="Service Level" value={solutionData.serviceLevel} description="Clients processed in less than 3 minutes since they arrive to the queue. The number is between 0 and 1, being 1 a higher rank." />
+                        <KPICard title="Service Level" value={solutionData.serviceLevel} description="Clients processed in less than 3 minutes since they arrive to the queue. Closest to 1 is better." />
                     </Box>
                     {/* ======================================== */}
                     {/*                  GANTT                   */}
@@ -204,12 +229,18 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                     {/* ======================================== */}
                     {/*                  OTHERS                  */}
                     {/* ======================================== */}
-                    <Box display="flex" justifyContent="space-around" marginTop="2em">
-                        <DataTable
-                            model={CashierPerformance}
-                            data={solutionData.cashierPerformance}
-                            isEditable={false}
+                    <Box display="flex" justifyContent="space-around" marginTop="0.3em">
+                        <BarChartByClients
+                            data={solutionData.clientPerProducts}
                         />
+                        <BarChartByClients
+                            data={solutionData.clientPerProducts}
+                        />
+                        {/* <DataTable
+                            model={CashierPerformance}
+                            data={solutionData.cashierPerformance.morning}
+                            isEditable={false}
+                        /> */}
                     </Box>
                 </>
             )}

@@ -243,7 +243,7 @@ function EditToolbar(props: EditToolbarProps) {
                     Add item
                 </Button>
                 {/* Add the export container */}
-                <GridToolbarExport
+                {/* <GridToolbarExport
                     printOptions={{ disableToolbarButton: true }}
                     sx={{
                         backgroundColor: colorTokens().greenAccent[500],
@@ -265,7 +265,7 @@ function EditToolbar(props: EditToolbarProps) {
                             color: 'white',
                         },
                     }}
-                />
+                /> */}
             </GridToolbarContainer>
             {/* Add the dialog to add an item */}
             <ItemDialog

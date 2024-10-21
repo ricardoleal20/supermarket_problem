@@ -66,8 +66,24 @@ export default class CashierPerformance implements DataTableModel, SolutionDataI
                 labelIcon: () => (<BadgeOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
-                field: 'arrivalTime',
-                headerName: 'Arrival Date',
+                field: 'serviceLevel',
+                headerName: 'Service Level',
+                type: "number",
+                sortable: true,
+                // width: 200,
+                flex: 1,
+                renderHeader: () => (
+                    <Typography>
+                        <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%' }}>
+                            <WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Service Level
+                        </Box>
+                    </Typography>
+                ),
+                labelIcon: () => (<WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
+            },
+            {
+                field: 'waitingTime',
+                headerName: 'Waiting Time',
                 type: "string",
                 sortable: true,
                 // width: 200,
@@ -75,33 +91,41 @@ export default class CashierPerformance implements DataTableModel, SolutionDataI
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%' }}>
-                            <WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Arrival Date
-                        </Box>
-                    </Typography>
-                ),
-                renderCell: (params) => (
-                    <Typography>
-                        <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%', height: '100%' }}>
-                            {arrivalTimeToDate(params.row.arrivalTime)}
+                            <WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Waiting Time
                         </Box>
                     </Typography>
                 ),
                 labelIcon: () => (<WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
             },
             {
-                field: 'products',
-                headerName: 'Quantity of products',
+                field: 'processingTime',
+                headerName: 'Processing Time',
+                type: "string",
+                sortable: true,
+                // width: 200,
+                flex: 1,
+                renderHeader: () => (
+                    <Typography>
+                        <Box display="flex" alignItems="center" justifyContent="center" style={{ width: '100%' }}>
+                            <WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Processing Time
+                        </Box>
+                    </Typography>
+                ),
+                labelIcon: () => (<WatchOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
+            },
+            {
+                field: 'freeTime',
+                headerName: 'Free Time in shift',
                 type: "number",
                 flex: 1,
                 renderHeader: () => (
                     <Typography>
                         <Box display="flex" alignItems="center">
-                            <ShoppingCartOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Quantity of products
+                            <ShoppingCartOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} /> Free Time
                         </Box>
                     </Typography>
                 ),
                 labelIcon: () => (<ShoppingCartOutlinedIcon fontSize="small" style={{ marginRight: "0.2em" }} />),
-                rangeValues: { min: 0.1, max: 1.0 },
             },
         ];
     }
