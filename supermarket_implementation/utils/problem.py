@@ -6,7 +6,7 @@ import pydash as _py
 from ortools.sat.python import cp_model
 # Local imports
 from supermarket_implementation.models import (
-    Client, Cashier, SolutionVar
+    Client, Cashier, SolverVar
 )
 
 AVG_PROCESS_TIME_PER_ITEM = 0.25  # minutes
@@ -16,17 +16,17 @@ def ignite_variables(
     clients: list[Client],
     cashiers: list[Cashier],
     model: cp_model.CpModel
-) -> list[SolutionVar]:
+) -> list[SolverVar]:
     """Ignitie the variables to use to solve the optimization problem"""
     # Create the array of solution vars
-    solutions: list[SolutionVar] = []
+    solutions: list[SolverVar] = []
     for cashier in cashiers:
         for client in clients:
             if client.arrival_time <= 360 and cashier.available_in_the_morning is False:
                 continue
             if client.arrival_time > 360 and cashier.available_in_the_afternoon is False:
                 continue
-            solutions.append(SolutionVar(
+            solutions.append(SolverVar(
                 cashier=cashier,
                 client=client,
                 start=model.NewIntVar(
@@ -44,7 +44,7 @@ def ignite_variables(
 
 
 def ignite_constraints(
-    solution_vars: list[SolutionVar],
+    solution_vars: list[SolverVar],
     model: cp_model.CpModel
 ) -> None:
     """Ignite the constraints, such as:
@@ -84,7 +84,7 @@ def ignite_constraints(
 
 
 def ignite_objectives(
-    solution_vars: list[SolutionVar],
+    solution_vars: list[SolverVar],
     model: cp_model.CpModel
 ) -> None:
     """Ignite the objectives of the optimization model

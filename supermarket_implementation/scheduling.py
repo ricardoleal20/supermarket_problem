@@ -5,7 +5,7 @@ Main implementation of the problem for the super market issue
 from ortools.sat.python import cp_model
 # Local imports
 from supermarket_implementation.models import (
-    Cashier, Client, SolutionVar
+    Cashier, Client, SolverVar, SolutionVar
 )
 from supermarket_implementation.utils import clients as client_utils
 from supermarket_implementation.utils import problem as problem_utils
@@ -19,7 +19,7 @@ class CashierScheduling:
     """
     _cashiers: list[Cashier]
     _clients: list[Client]
-    _solution: list[SolutionVar]
+    _solution: list[SolverVar]
     _model: cp_model.CpModel
     solver: cp_model.CpSolver
     # Define the slots for this class
@@ -82,16 +82,29 @@ class CashierScheduling:
 
         if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             raise RuntimeError("The problem cannot be solved...")
+        # Otherwise, print that the solution has runned succesfully
+        print("The problem has been solved succesfully in {} seconds!")
 
     def results(self, include_inactive: bool = False) -> list[SolutionVar]:
         """Once the scheduling has been made, return the vars that define the solution."""
         if not self._solution:
             raise Warning(
                 "There's no solution available. Please run the `solve` method first.")
-
+        # Convert the solver var to solution vars
+        solutions_vars = [
+            SolutionVar(
+                cashier=var.cashier,
+                client=var.client,
+                start=self.solver.Value(var.start),
+                end=self.solver.Value(var.end),
+                duration=var.duration,
+                active=self.solver.Value(var.active),
+            )
+            for var in self._solution
+        ]
         # Return the solution. If we want to include the inactive too, then
         # return simply the reference to the solution
         if include_inactive is True:
-            return self._solution
-        # Otherwise, return the filtered solution
-        return [var for var in self._solution if self.solver.value(var.active)]
+            return solutions_vars
+        # Otherwise, return the filtered solution. Convert each
+        return [var for var in solutions_vars if var.active]

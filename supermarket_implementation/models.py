@@ -68,8 +68,8 @@ class Client:
 
 
 @dataclass
-class SolutionVar:
-    """Solution Var.
+class SolverVar:
+    """Solver Var.
     This is more like a tuple of variables that represent one state of the solution.
     In this tuple of variables, we use:
         - cashier: The cashier that's gonna attend this client
@@ -89,3 +89,27 @@ class SolutionVar:
 
     def __repr__(self) -> str:
         return f"SolverVar::{self.cashier.name}|-->Active={self.active}"
+
+
+@dataclass
+class SolutionVar:
+    """Solution Var.
+    This is more like a tuple of variables that represent one state of the solution.
+    In this tuple of variables, we use:
+        - cashier: The cashier that's gonna attend this client
+        - client: Client to attend
+        - start: At which time we're going to attend this client
+        - end: At which time we finished of attending this client
+        - active: This variable is on the final solution?
+        - 
+
+    """
+    cashier: Cashier
+    client: Client
+    start: int
+    end: int
+    duration: int
+    active: int
+
+    def __repr__(self) -> str:
+        return f"SolutionVar::{self.cashier.name}|-->Active={self.active}"

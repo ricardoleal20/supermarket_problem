@@ -1,6 +1,7 @@
 """
 Provide a Base API to use on the server handler
 """
+from typing_extensions import TypedDict
 from fastapi import FastAPI, HTTPException
 # Import also the CORSMiddleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,9 +9,20 @@ from pydantic import BaseModel
 # Local imports
 from supermarket_implementation.scheduling import CashierScheduling
 from supermarket_implementation.models import Cashier, Client
+from supermarket_implementation.utils import kpis as KPI
 from supermarket_implementation.__info__ import (
     APP_NAME, DESCRIPTION, contact, __version__, __license__
 )
+
+# Define some types
+
+
+class CashierDict(TypedDict):
+    """Client dictionary"""
+    workerId: str
+    available_in_the_morning: bool
+    available_in_the_afternoon: bool
+    effectiveness_average: float
 
 # Define the ClientRequest class
 
@@ -22,13 +34,17 @@ class ClientRequest(BaseModel):
 
 class SolverRequest(BaseModel):
     """Solver Request for the POST method"""
-    cashiers: list[dict[str, str | bool | float]]
+    cashiers: list[CashierDict]
     clients: list[dict[str, int]]
 
 
 class SolverResult(BaseModel):
     """Solver Result to result from the POST method"""
-    solution: list[dict]
+    ganttSolution: list[dict]
+    serviceLevel: float
+    avgQueueWaitingTime: float
+    avgProcessingTime: float
+    avgFreeTime: float
 
 class App():  # pylint: disable=R0903
     """Application to handle the backend server for this problem
@@ -58,6 +74,7 @@ class App():  # pylint: disable=R0903
         # **************************** #
         self._app.get("/")(self.__default)
         self._app.post("/generate_clients")(self.generate_clients)
+        self._app.post("/solve_problem")(self.execute_solver)
         self._app.get("/{unknown_pages}")(self.__404)
 
         # * Add the middleware
@@ -97,11 +114,20 @@ class App():  # pylint: disable=R0903
 
     async def execute_solver(self, request: SolverRequest) -> SolverResult:
         """Execute the solver"""
+        print(
+            f"Executing the solver with {len(request.clients)}" +
+            f" clients and {len(request.cashiers)} cashiers"
+        )
         # Instance th solver result
         solution = []
         # Obtain the cashiers and clients model
         cashiers = [
-            Cashier(**cashier)  # type: ignore
+            Cashier(
+                name=cashier["workerId"],
+                available_in_the_morning=cashier["available_in_the_afternoon"],
+                available_in_the_afternoon=cashier["available_in_the_afternoon"],
+                effectiveness_average=cashier["effectiveness_average"],
+            )
             for cashier in request.cashiers
         ]
         clients = [
@@ -120,9 +146,16 @@ class App():  # pylint: disable=R0903
         # Get the solver
         solver = self._solver.solver
         # Get the results
-        results = self._solver.results()
+        try:
+            results = self._solver.results()
+        except Exception as e:
+            print(f"Solver failed with error: {e}")
+            raise HTTPException(
+                status_code=500, detail="Solver failed to find a solution") from e
         # Get the solver result
+        print("Modifyng the results...")
         solution = [{
+            "id": f"TASK_{var.client.id}_{var.cashier.name}",
             "processor": var.cashier.name,
             "task": f"Client {var.client.id}",
             "start": solver.Value(var.start),
@@ -131,7 +164,14 @@ class App():  # pylint: disable=R0903
             "products": var.client.products
         } for var in results]
         # Return the SolverResult
-        return SolverResult(solution=solution)
+        print("Sending the results...")
+        return SolverResult(
+            avgProcessingTime=KPI.calculate_service_time_kpi(results),
+            avgQueueWaitingTime=KPI.calculate_waiting_time_kpi(results),
+            avgFreeTime=KPI.calculate_cashier_free_time_kpi(results),
+            serviceLevel=KPI.calculate_service_level_kpi(results),
+            ganttSolution=solution
+        )
 
     async def generate_clients(
         self,
