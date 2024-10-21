@@ -10,6 +10,11 @@ from pydantic import BaseModel
 from supermarket_implementation.scheduling import CashierScheduling
 from supermarket_implementation.models import Cashier, Client
 from supermarket_implementation.utils import kpis as KPI
+from supermarket_implementation.utils.extra_data import (
+    # CashiersPerformance, calculate_cashier_performance,
+    ClientPerProduct, get_clients_per_product,
+    ScatterData, get_scatter_data
+)
 from supermarket_implementation.__info__ import (
     APP_NAME, DESCRIPTION, contact, __version__, __license__
 )
@@ -41,6 +46,9 @@ class SolverRequest(BaseModel):
 class SolverResult(BaseModel):
     """Solver Result to result from the POST method"""
     ganttSolution: list[dict]
+    # cashierPerformance: CashiersPerformance
+    arrivalVsStart: list[ScatterData]
+    clientPerProducts: list[ClientPerProduct]
     serviceLevel: float
     avgQueueWaitingTime: float
     avgProcessingTime: float
@@ -170,6 +178,9 @@ class App():  # pylint: disable=R0903
             avgQueueWaitingTime=KPI.calculate_waiting_time_kpi(results),
             avgFreeTime=KPI.calculate_cashier_free_time_kpi(results),
             serviceLevel=KPI.calculate_service_level_kpi(results),
+            # cashierPerformance=calculate_cashier_performance(results),
+            clientPerProducts=get_clients_per_product(results),
+            arrivalVsStart=get_scatter_data(results),
             ganttSolution=solution
         )
 

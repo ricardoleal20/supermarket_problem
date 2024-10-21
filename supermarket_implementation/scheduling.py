@@ -35,6 +35,8 @@ class CashierScheduling:
         # Create the model
         self._model = cp_model.CpModel()
         self.solver = cp_model.CpSolver()
+        # Also, set the timing to find a solution to 15 seconds
+        self.solver.parameters.max_time_in_seconds = 15
 
     def set_cashiers(self, cashiers: list[Cashier]) -> None:
         """Set the cashiers that are available to be in the work schedule for the day"""
