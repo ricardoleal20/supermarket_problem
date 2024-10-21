@@ -67,6 +67,7 @@
 *.sage.py
 *.so
 *.spec
+.DS_STORE
 .Python
 .cache
 .coverage
@@ -92,6 +93,7 @@
 .spyproject
 .tox/
 .venv
+.vscode/
 .web
 .webassets-cache
 /site
@@ -134,5 +136,29 @@ var/
 venv.bak/
 venv/
 wheels/
-.vscode/
-.DS_STORE
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
