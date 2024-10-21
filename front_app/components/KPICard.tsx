@@ -10,7 +10,7 @@ import { Box, Typography, Divider, Card } from '@mui/material';
 
 interface KPICardProps {
     title: string;
-    value: string;
+    value: string | number;
     description: string;
     icon?: React.ReactNode;
 };
@@ -37,7 +37,7 @@ export default function KPICard({ title, value, icon, description }: KPICardProp
                         {value}
                     </Typography>
                     <Divider orientation="vertical" flexItem />
-                    <Typography variant="h6" color="primary.contrastText" sx={{ maxWidth: "70%", fontSize: "" }}>
+                    <Typography variant="h6" color="secondary.contrastText" sx={{ maxWidth: "70%", fontSize: "" }}>
                         {description}
                     </Typography>
                 </Box>

@@ -15,6 +15,17 @@ body,
 }
 
 /* ================= */
+/* Google styles     */
+/* ================= */
+text[text-anchor="middle"] {
+  fill: #ffffff;
+}
+
+/* text[text-anchor="end"] {
+  fill: #ffffff;
+} */
+
+/* ================= */
 /* App configuration */
 /* ================= */
 .app {

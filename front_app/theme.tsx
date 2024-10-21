@@ -75,10 +75,11 @@ export const theme = () => {
             // ================ //
             primary: {
                 main: colors.primary[900],
-                contrastText: colors.grey[300],
+                //contrastText: colors.grey[300],
             },
             secondary: {
                 main: colors.greenAccent[500],
+                contrastText: colors.grey[300],
             },
             background: {
                 default: colors.primary[500],
