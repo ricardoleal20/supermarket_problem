@@ -3,8 +3,11 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "homepage": "https://supermarket-opt.ricardoleal20.dev",
   "scripts": {
-    "start": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "NODE_ENV=development vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -17,6 +20,8 @@
     "@mui/material": "^6.1.1",
     "@mui/x-charts": "^7.21.0",
     "@mui/x-data-grid": "^7.19.0",
+    "@types/node": "^22.7.7",
+    "gh-pages": "^6.2.0",
     "mui-datatables": "^4.3.0",
     "notistack": "^3.0.1",
     "react": "^18.3.1",

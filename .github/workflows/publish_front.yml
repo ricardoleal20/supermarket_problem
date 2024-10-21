@@ -24,19 +24,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python 🐍
-        uses: actions/setup-python@v2
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
         with:
-          python-version: '3.10'
+          node-version: 16.x
 
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry install --no-interaction --no-ansi
-
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install # will run `yarn install` command
 
       - name: Build page 🧱
-        run: API_URL=https://supermarket-backend.ricardoleal20.dev poetry run reflex export --frontend-only
+        run: yarn build
 
       - name: Extract page 🔐
         run: unzip frontend.zip
@@ -46,14 +45,10 @@ jobs:
         env:
           URL: https://supermarket-opt.ricardoleal20.dev
 
-      - name: Setup Pages 🧱
-        uses: actions/configure-pages@v5
-
-      - name: Upload page 🕊️
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
       - name: Deploy to GitHub Pages 🚀
         id: deployment
-        uses: actions/deploy-pages@v4
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          yarn deploy -- -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
