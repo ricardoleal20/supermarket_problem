@@ -14,7 +14,6 @@ interface BarChartProps {
 }
 
 export function BarChartByClients({ data }: BarChartProps) {
-    console.log("Data for bar chart...", data);
     return (
         <BarChart
             xAxis={[{
@@ -22,7 +21,7 @@ export function BarChartByClients({ data }: BarChartProps) {
                 data: ['<15 products', ' 15 - 30 products', '>30 products'],
                 label: 'Clients per products',
                 // categoryGapRatio: 0.3,
-                barGapRatio: 0.1
+                // barGapRatio: 0.1
             }]}
             yAxis={[{
                 label: "Avg duration (minutes)"

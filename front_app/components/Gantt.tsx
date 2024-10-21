@@ -68,7 +68,6 @@ const mapDataToEvents = (data: any): any[] => {
 export default function Gantt({ data }: GanttProps) {
     // Create the events for the scheduler section
     const events = mapDataToEvents(data);
-    console.log("Events are...", events);
     // Define the component for the gantt
     // Add custom resources
     // const customResources = ["Resource 1", "Resource 2", "Resource 3"];

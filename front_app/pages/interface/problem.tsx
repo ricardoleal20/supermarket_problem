@@ -112,7 +112,6 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 "cashiers": cashierData,
                 "clients": clientData,
             });
-            console.log("DATA", data);
             // From this data, just make sure to create a new instance with the
             // cashierPerformance converted to the CashierPerformance model
             // const cashierPerformance = {
@@ -138,7 +137,6 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             //     })
             // };
             // data.cashierPerformance = cashierPerformance;
-            console.log("DATA BEFORE SET", data);
             setSolutionData(data);
         } catch (error) {
             if (error.response && error.response.status === 500) {
