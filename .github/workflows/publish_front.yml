@@ -37,15 +37,16 @@ jobs:
       - name: Build page 🧱
         run: yarn build
 
-      # - name: Inject page 💉
-      #   run: python replace_urls.py
-      #   env:
-      #     URL: https://supermarket-opt.ricardoleal20.dev
+      - name: Inject page 💉
+        run: python replace_urls.py
+        env:
+          URL: https://supermarket-opt.ricardoleal20.dev
+
+      - name: Upload page 🕊️
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
 
       - name: Deploy to GitHub Pages 🚀
         id: deployment
-        run: |
-          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          yarn deploy -- -u "github-actions-bot <support+actions@github.com>"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/deploy-pages@v4
