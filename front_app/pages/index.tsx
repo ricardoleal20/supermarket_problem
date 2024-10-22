@@ -36,6 +36,7 @@ const Home = () => {
                         For more detailed information about this solution, check
                         the <Link
                             color={colors.greenAccent[500]}
+                            href="/interface/FAQ"
                             underline="hover"
                             sx={{
                                 cursor: "pointer"

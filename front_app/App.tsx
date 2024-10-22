@@ -13,6 +13,7 @@ import NotFound from "./pages/not_found";
 import CashierData from "./pages/interface/cashier";
 import ClientData from "./pages/interface/client";
 import ProblemPage from "./pages/interface/problem";
+import FaqPage from "./pages/interface/faq";
 // Other Local imports
 import { theme } from "./theme";
 
@@ -46,6 +47,7 @@ function App() {
               <Route path="/interface/cashier_data" element={<CashierData open={open} setOpen={setOpen} />} />
               <Route path="/interface/clients" element={<ClientData open={open} setOpen={setOpen} />} />
               <Route path="/interface/run" element={<ProblemPage open={open} setOpen={setOpen} />} />
+              <Route path="/interface/faq" element={<FaqPage open={open} setOpen={setOpen} />} />
             </Routes>
           </Router>
         </main>
