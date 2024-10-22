@@ -21,15 +21,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
+      - name: Checkout repository 🔍
         uses: actions/checkout@v2
 
-      - name: Set Node.js 18.x
+      - name: Set Node.js 18.x 💄
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
 
-      - name: Run install
+      - name: Run install 📦
         uses: borales/actions-yarn@v4
         with:
           cmd: install # will run `yarn install` command
@@ -37,13 +37,10 @@ jobs:
       - name: Build page 🧱
         run: yarn build
 
-      - name: Extract page 🔐
-        run: unzip frontend.zip
-
-      - name: Inject page 💉
-        run: python replace_urls.py
-        env:
-          URL: https://supermarket-opt.ricardoleal20.dev
+      # - name: Inject page 💉
+      #   run: python replace_urls.py
+      #   env:
+      #     URL: https://supermarket-opt.ricardoleal20.dev
 
       - name: Deploy to GitHub Pages 🚀
         id: deployment
