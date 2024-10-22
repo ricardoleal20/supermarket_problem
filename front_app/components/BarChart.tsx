@@ -11,9 +11,11 @@ export interface BarChartData {
 
 interface BarChartProps {
     data: BarChartData[];
+    width?: number;
+    height?: number;
 }
 
-export function BarChartByClients({ data }: BarChartProps) {
+export function BarChartByClients({ data, width, height }: BarChartProps) {
     return (
         <BarChart
             xAxis={[{
@@ -27,8 +29,8 @@ export function BarChartByClients({ data }: BarChartProps) {
                 label: "Avg duration (minutes)"
             }]}
             series={data}
-            width={500}
-            height={300}
+            width={width ?? 500}
+            height={height ?? 300}
             slotProps={{ legend: { hidden: true } }}
             borderRadius={10}
             barLabel="value"

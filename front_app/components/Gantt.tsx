@@ -17,6 +17,9 @@ const Fields = [
 // Defien the interface for the Gantt component
 interface GanttProps {
     data: any;
+    allResources?: string[];
+    width?: number;
+    height?: number;
 };
 
 interface Event {
@@ -54,7 +57,7 @@ const mapDataToEvents = (data: any): any[] => {
         // };
         const event = [
             element.processor,
-            element.title,
+            "",
             createDateTime(element.start),
             createDateTime(element.end),
         ]
@@ -65,23 +68,31 @@ const mapDataToEvents = (data: any): any[] => {
     return events;
 };
 
-export default function Gantt({ data }: GanttProps) {
+export default function Gantt({ data, allResources, width, height }: GanttProps) {
     // Create the events for the scheduler section
     const events = mapDataToEvents(data);
     // Define the component for the gantt
     // Add custom resources
-    // const customResources = ["Resource 1", "Resource 2", "Resource 3"];
-    // customResources.forEach(resource => {
-    //     if (!events.some(event => event[0] === resource)) {
-    //         events.push([resource, "", new Date(0, 0, 0, 7, 0, 0), new Date(0, 0, 0, 7, 0, 0)]);
-    //     }
-    // });
+    if (allResources) {
+        allResources.forEach(resource => {
+            if (!events.some(event => event[0] === resource)) {
+                events.push([resource, "", new Date(0, 0, 0, 8, 0, 0), new Date(0, 0, 0, 8, 0, 0)]);
+            }
+        });
+
+        // Sort the events by their resource (first column)
+        // events.sort((a, b) => {
+        //     if (a[0] < b[0]) return -1;
+        //     if (a[0] > b[0]) return 1;
+        //     return 0;
+        // });
+    }
 
     return (
         <Chart
             chartType="Timeline"
-            width="100%"
-            height="400px"
+            width={width ?? "100%"}
+            height={height ?? "300px"}
             data={events}
             options={{
                 timeline: {
