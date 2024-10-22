@@ -1,6 +1,7 @@
 """
 Main implementation of the problem for the super market issue
 """
+from time import time
 # OR Tools import
 from ortools.sat.python import cp_model
 # Local imports
@@ -80,12 +81,14 @@ class CashierScheduling:
         problem_utils.ignite_constraints(self._solution, self._model)
         problem_utils.ignite_objectives(self._solution, self._model)
         # At the end, just run the optimization!
+        start_time = time()
         status = self.solver.Solve(self._model)
 
         if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             raise RuntimeError("The problem cannot be solved...")
         # Otherwise, print that the solution has runned succesfully
-        print("The problem has been solved succesfully in {} seconds!")
+        print(
+            f"The problem has been solved succesfully in {time() - start_time} seconds!")
 
     def results(self, include_inactive: bool = False) -> list[SolutionVar]:
         """Once the scheduling has been made, return the vars that define the solution."""
