@@ -3,7 +3,6 @@
 /// * Gantt to show how does behave the solution around each cashier and the clients
 /// * @packageDocumentation
 /// * @module Gantt
-import React from 'react';
 // Imports for the Gantt chart
 import { Chart } from "react-google-charts";
 
@@ -21,15 +20,6 @@ interface GanttProps {
     width?: number;
     height?: number;
 };
-
-interface Event {
-    id: number,
-    eventId: number,
-    title: string,
-    start: Date,
-    end: Date,
-    color?: string
-}
 
 // Let's create a function to map the data to events
 // and return the events

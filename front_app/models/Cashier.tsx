@@ -1,37 +1,44 @@
 // Cashier model, to receive data from it
 // and to manage easily the data
-import { GridColDef, GridRowId } from '@mui/x-data-grid';
+
+// Include the UUID4 generator
+import { v4 as uuidv4 } from 'uuid';
+// Include the GridRowId
+import { GridRowId } from '@mui/x-data-grid';
 // Icons
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import ModeNightOutlinedIcon from '@mui/icons-material/ModeNightOutlined';
 import PercentOutlinedIcon from '@mui/icons-material/PercentOutlined';
 // Local imports
-import { DataTableModel } from "../components/DataTable"
+import { DataTableModel, FieldsInfo } from "../components/DataTable"
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 
-interface CashierInterface {
-    /// This interface allow me to define what are I'm going to need
-    /// for this model
+export default class Cashier implements DataTableModel {
+    id: GridRowId;
     workerId: string;
     available_in_the_morning: boolean;
     available_in_the_afternoon: boolean;
     effectiveness_average: number;
-}
 
-export default class Cashier implements DataTableModel, CashierInterface {
+
     /// This class is just the object to retrieve the data
     constructor(
-        public id: GridRowId,
-        public workerId: string,
-        public available_in_the_morning: boolean,
-        public available_in_the_afternoon: boolean,
-        public effectiveness_average: number
-    ) { }
+        workerId: string,
+        available_in_the_morning: boolean,
+        available_in_the_afternoon: boolean,
+        effectiveness_average: number
+    ) {
+        this.id = workerId;
+        this.workerId = workerId;
+        this.available_in_the_morning = available_in_the_morning;
+        this.available_in_the_afternoon = available_in_the_afternoon;
+        this.effectiveness_average = effectiveness_average;
+    }
 
     // Method to return the columns from the model
-    private static getFieldsInformation(): GridColDef[] {
+    private static getFieldsInformation(): FieldsInfo[] {
         return [
             // Hide the ID column
             { field: "id", headerName: "ID" },
@@ -104,4 +111,6 @@ export default class Cashier implements DataTableModel, CashierInterface {
     static getFieldsInfo() {
         return Cashier.getFieldsInformation();
     }
+
+    static id: GridRowId = new Cashier(uuidv4(), false, false, 0).id;
 }

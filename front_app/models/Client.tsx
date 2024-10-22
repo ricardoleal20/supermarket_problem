@@ -1,12 +1,15 @@
 // Cashier model, to receive data from it
 // and to manage easily the data
-import { GridColDef, GridRowId } from '@mui/x-data-grid';
+
+// Include the UUID4 generator
+import { v4 as uuidv4 } from 'uuid';
+import { GridRowId } from '@mui/x-data-grid';
 // Icons
 import WatchOutlinedIcon from '@mui/icons-material/WatchOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
 // Local imports
-import { DataTableModel } from "../components/DataTable"
+import { DataTableModel, FieldsInfo } from "../components/DataTable"
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 
@@ -26,22 +29,31 @@ function arrivalTimeToDate(arrivalTime: number): string {
 interface ClientInterface {
     /// This interface allow me to define what are I'm going to need
     /// for this model
-    clientId: number
-    arrivalDate: number
+    clientId: string
+    arrivalTime: number
     products: number
 }
 
 export default class Client implements DataTableModel, ClientInterface {
     /// This class is just the object to retrieve the data
+    id: GridRowId;
+    clientId: string;
+    arrivalTime: number;
+    products: number
+
     constructor(
-        public id: GridRowId,
-        public clientId: number,
-        public arrivalTime: number,
-        public products: number
-    ) { }
+        clientId: string,
+        arrivalTime: number,
+        products: number
+    ) {
+        this.id = clientId;
+        this.clientId = clientId;
+        this.arrivalTime = arrivalTime;
+        this.products = products;
+    }
 
     // Method to return the columns from the model
-    private static getFieldsInformation(): GridColDef[] {
+    private static getFieldsInformation(): FieldsInfo[] {
         return [
             // Hide the ID column
             { field: "id", headerName: "ID" },
@@ -108,4 +120,6 @@ export default class Client implements DataTableModel, ClientInterface {
     static getFieldsInfo() {
         return Client.getFieldsInformation();
     }
+
+    static id: GridRowId = new Client(uuidv4(), 0, 0).id;
 }

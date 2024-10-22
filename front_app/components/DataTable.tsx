@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
     DataGrid, GridColDef, GridRowsProp, GridRowModesModel,
     GridToolbarContainer, GridSlots, GridActionsCellItem,
-    GridValidRowModel, GridToolbarExport, GridRowId
+    GridValidRowModel, GridRowId
 } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -34,12 +34,17 @@ interface HashSet<T = any> {
     [key: string]: T; // With this, i know that the entries are going to be string but the response can be anything!
 }
 
-export type FieldsInfo = HashSet | GridColDef;
-
+export type FieldsInfo = GridColDef & {
+    labelIcon?: () => React.ReactNode;
+    rangeValues?: {
+        min?: number;
+        max?: number;
+    };
+}
 
 export interface DataTableModel {
     id: GridRowId;
-    getFieldsInfo: () => GridColDef[];
+    getFieldsInfo: () => FieldsInfo[];
 }
 
 interface DataTableProps {

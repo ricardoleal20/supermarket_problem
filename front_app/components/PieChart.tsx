@@ -7,7 +7,6 @@
 /// * time of the cashiers. 
 
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
-import { format } from 'path';
 
 export interface EfficiencyData {
     id: number,
