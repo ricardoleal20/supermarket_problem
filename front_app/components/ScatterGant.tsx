@@ -18,6 +18,8 @@ export interface ScatterData {
 
 interface ScatterProps {
     data: ScatterData[];
+    width?: number;
+    height?: number;
 }
 
 function axisFormated(value: number) {
@@ -36,7 +38,7 @@ function axisFormated(value: number) {
     // }
 }
 
-export function ScatterGant({ data }: ScatterProps) {
+export function ScatterGant({ data, width, height }: ScatterProps) {
     return (
         <ScatterChart
             title="Arrival Time to the Queue vs Start processing time"
@@ -53,8 +55,8 @@ export function ScatterGant({ data }: ScatterProps) {
                 }
             }]}
             series={data}
-            width={500}
-            height={300}
+            width={width ?? 500}
+            height={height ?? 300}
             slotProps={{ legend: { hidden: true } }}
         />
     )

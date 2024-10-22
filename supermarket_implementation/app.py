@@ -13,7 +13,8 @@ from supermarket_implementation.utils import kpis as KPI
 from supermarket_implementation.utils.extra_data import (
     # CashiersPerformance, calculate_cashier_performance,
     ClientPerProduct, get_clients_per_product,
-    ScatterData, get_scatter_data
+    ScatterData, get_scatter_data,
+    EfficiencyData, get_shift_efficiency
 )
 from supermarket_implementation.__info__ import (
     APP_NAME, DESCRIPTION, contact, __version__, __license__
@@ -49,6 +50,7 @@ class SolverResult(BaseModel):
     # cashierPerformance: CashiersPerformance
     arrivalVsStart: list[ScatterData]
     clientPerProducts: list[ClientPerProduct]
+    efficiencyData: list[EfficiencyData]
     serviceLevel: float
     avgQueueWaitingTime: float
     avgProcessingTime: float
@@ -181,6 +183,7 @@ class App():  # pylint: disable=R0903
             # cashierPerformance=calculate_cashier_performance(results),
             clientPerProducts=get_clients_per_product(results),
             arrivalVsStart=get_scatter_data(results),
+            efficiencyData=get_shift_efficiency(results),
             ganttSolution=solution
         )
 

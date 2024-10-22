@@ -17,7 +17,8 @@ import KPICard from '../../components/KPICard';
 // import DataTable from '../../components/DataTable';
 import { BarChartByClients, BarChartData } from "../../components/BarChart";
 import { ScatterGant, ScatterData } from "../../components/ScatterGant";
-// import Gantt from '../../components/Gantt';
+import { PieChartComponent, EfficiencyData } from "../../components/PieChart";
+import Gantt from '../../components/Gantt';
 import { CashierPerformance } from '../../models';
 import { PageTemplate, AvailablePages, PageChildrenProps } from "../../components/PageTemplate";
 import { colorTokens } from '../../theme';
@@ -36,6 +37,7 @@ interface SolutionData {
     cashierPerformance: CashierPerformanceByDay;
     arrivalVsStart: ScatterData[];
     clientPerProducts: BarChartData[]
+    efficiencyData: EfficiencyData[];
     ganttSolution: any[];
 }
 
@@ -59,7 +61,8 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             afternoon: []
         },
         clientPerProducts: [],
-        arrivalVsStart: []
+        arrivalVsStart: [],
+        efficiencyData: []
     });
 
     // Define the method to handle the execution of the problem
@@ -112,31 +115,6 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                 "cashiers": cashierData,
                 "clients": clientData,
             });
-            // From this data, just make sure to create a new instance with the
-            // cashierPerformance converted to the CashierPerformance model
-            // const cashierPerformance = {
-            //     morning: Object.values(data.cashierPerformance.morning).map((element: any) => {
-            //         return new CashierPerformance(
-            //             `${element.workerId}_MORNING`,
-            //             element.workerId,
-            //             element.serviceLevel,
-            //             element.avgQueueWaitingTime,
-            //             element.avgProcessingTime,
-            //             element.avgFreeTime
-            //         );
-            //     }),
-            //     afternoon: Object.values(data.cashierPerformance.afternoon).map((element: any) => {
-            //         return new CashierPerformance(
-            //             `${element.workerId}_AFTERNOON`,
-            //             element.workerId,
-            //             element.serviceLevel,
-            //             element.avgQueueWaitingTime,
-            //             element.avgProcessingTime,
-            //             element.avgFreeTime
-            //         );
-            //     })
-            // };
-            // data.cashierPerformance = cashierPerformance;
             setSolutionData(data);
         } catch (error) {
             if (error.response && error.response.status === 500) {
@@ -216,7 +194,7 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                     {/* ======================================== */}
                     {/*                  KPIs                    */}
                     {/* ======================================== */}
-                    <Box display="flex" justifyContent="space-around" marginTop="2em">
+                    <Box display="flex" justifyContent="space-around" marginTop="0.5em">
                         <KPICard title="Average Queue Waiting Time" value={solutionData.avgQueueWaitingTime} description="How much minutes do each client wait on the queue to start being processed?" />
                         <KPICard title="Average Processing Time" value={solutionData.avgProcessingTime} description="How much minutes do each client takes to get into the queue and to be processed?" />
                         <KPICard title="Average free-time on the cashiers" value={solutionData.avgFreeTime} description="Average dead-time between the cashiers" />
@@ -231,18 +209,66 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                     {/* ======================================== */}
                     {/*                  OTHERS                  */}
                     {/* ======================================== */}
-                    <Box display="flex" justifyContent="space-around" marginTop="0.3em">
-                        <BarChartByClients
-                            data={solutionData.clientPerProducts}
-                        />
-                        <ScatterGant
-                            data={solutionData.arrivalVsStart}
-                        />
+                    <Box display="flex" justifyContent="space-between" marginTop="0.1em">
+                        <Box sx={{ width: '30%', height: '300px' }}>
+                            <BarChartByClients
+                                data={solutionData.clientPerProducts}
+                                width={400}
+                            />
+                        </Box>
+                        <Box sx={{ width: '30%', height: '300px' }}>
+                            <ScatterGant
+                                data={solutionData.arrivalVsStart}
+                                width={400}
+                            />
+                        </Box>
+                        <Box sx={{ width: '30%', height: '300px' }} marginTop="3em" marginLeft="1em">
+                            <PieChartComponent
+                                data={solutionData.efficiencyData}
+                            />
+                        </Box>
                         {/* <DataTable
                             model={CashierPerformance}
                             data={solutionData.cashierPerformance.morning}
                             isEditable={false}
                         /> */}
+                    </Box>
+                    {/* ======================================== */}
+                    {/*                    INFO                  */}
+                    {/* ======================================== */}
+                    {/* <Box display="flex" justifyContent="space-between" marginTop="0.1em">
+                        <Box sx={{ width: '30%', height: '300px' }}>
+                            <Typography variant="h5" align="center" color={colors.primary[100]}>
+                                Cashier Performance
+                            </Typography>
+                        </Box>
+                        <Box sx={{ width: '30%', height: '300px' }}>
+                            <Typography variant="h5" align="center" color={colors.primary[100]}>
+                                Cashier Performance
+                            </Typography>
+                        </Box>
+                        <Box sx={{ width: '30%', height: '300px' }}>
+                            <Typography variant="h5" align="center" color={colors.primary[100]}>
+                                Cashier Performance
+                            </Typography>
+                        </Box>
+                    </Box> */}
+                    <Box marginTop="0em">
+                        <Box display="flex">
+                            <Typography variant="h3" align="left" color={colors.primary[100]}>
+                                Gantt solution
+                            </Typography>
+                            <Typography variant="h5" align="left" color={colors.grey[300]} marginLeft="1em" marginTop="0.4em">
+                                Those resources without events are the cashiers that haven't attend any client.
+                            </Typography>
+                        </Box>
+                        <Gantt
+                            data={solutionData.ganttSolution}
+                            allResources={
+                                JSON.parse(sessionStorage.getItem('cashierData') || "[]").map((cashier: any) => cashier.workerId)
+                            }
+                        />
+
                     </Box>
                 </>
             )}
