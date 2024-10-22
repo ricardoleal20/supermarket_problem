@@ -42,8 +42,6 @@ interface SolutionData {
 }
 
 
-
-
 const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
     // Get the colors
     const colors = colorTokens();
@@ -117,37 +115,20 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
             });
             setSolutionData(data);
         } catch (error) {
-            if (error.response && error.response.status === 500) {
-                enqueueSnackbar(
-                    <Typography>
-                        There was an error processing the problem. Please try again later.
-                    </Typography>,
-                    {
-                        variant: 'error',
-                        autoHideDuration: 3000,
-                        preventDuplicate: true,
-                        anchorOrigin: { horizontal: "center", vertical: "bottom" },
-                        style: {
-                            backgroundColor: colors.redAccent[800],
-                        }
+            enqueueSnackbar(
+                <Typography>
+                    There was an error processing the problem. Please try again later.
+                </Typography>,
+                {
+                    variant: 'error',
+                    autoHideDuration: 3000,
+                    preventDuplicate: true,
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" },
+                    style: {
+                        backgroundColor: colors.redAccent[800],
                     }
-                );
-            } else {
-                enqueueSnackbar(
-                    <Typography>
-                        Something went wrong running the solver. Please try again later.
-                    </Typography>,
-                    {
-                        variant: 'error',
-                        autoHideDuration: 3000,
-                        preventDuplicate: true,
-                        anchorOrigin: { horizontal: "center", vertical: "bottom" },
-                        style: {
-                            backgroundColor: colors.redAccent[800],
-                        }
-                    }
-                );
-            }
+                }
+            );
         }
         await new Promise(resolve => setTimeout(resolve, 500));
         setLoadingRunButton(false);
@@ -201,12 +182,6 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                         <KPICard title="Service Level" value={solutionData.serviceLevel} description="Clients processed in less than 3 minutes since they arrive to the queue. Closest to 1 is better." />
                     </Box>
                     {/* ======================================== */}
-                    {/*                  GANTT                   */}
-                    {/* ======================================== */}
-                    {/* <Box marginTop="2em">
-                        <Gantt data={solutionData.ganttSolution} />
-                    </Box> */}
-                    {/* ======================================== */}
                     {/*                  OTHERS                  */}
                     {/* ======================================== */}
                     <Box display="flex" justifyContent="space-between" marginTop="0.1em">
@@ -227,32 +202,10 @@ const ProblemPage: React.FC<PageChildrenProps> = ({ open, setOpen }) => {
                                 data={solutionData.efficiencyData}
                             />
                         </Box>
-                        {/* <DataTable
-                            model={CashierPerformance}
-                            data={solutionData.cashierPerformance.morning}
-                            isEditable={false}
-                        /> */}
                     </Box>
                     {/* ======================================== */}
-                    {/*                    INFO                  */}
+                    {/*                  GANTT                   */}
                     {/* ======================================== */}
-                    {/* <Box display="flex" justifyContent="space-between" marginTop="0.1em">
-                        <Box sx={{ width: '30%', height: '300px' }}>
-                            <Typography variant="h5" align="center" color={colors.primary[100]}>
-                                Cashier Performance
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '30%', height: '300px' }}>
-                            <Typography variant="h5" align="center" color={colors.primary[100]}>
-                                Cashier Performance
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '30%', height: '300px' }}>
-                            <Typography variant="h5" align="center" color={colors.primary[100]}>
-                                Cashier Performance
-                            </Typography>
-                        </Box>
-                    </Box> */}
                     <Box marginTop="0em">
                         <Box display="flex">
                             <Typography variant="h3" align="left" color={colors.primary[100]}>

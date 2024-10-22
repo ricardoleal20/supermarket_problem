@@ -30,10 +30,10 @@ import { colorTokens } from '../../theme';
 
 
 const rawData: Cashier[] = [
-    new Cashier(1, 'W001', true, false, 0.8),
-    new Cashier(2, 'W002', true, true, 0.9),
-    new Cashier(3, 'W003', false, true, 0.7),
-    new Cashier(4, 'W004', false, false, 0.95),
+    new Cashier('W001', true, false, 0.8),
+    new Cashier('W002', true, true, 0.9),
+    new Cashier('W003', false, true, 0.7),
+    new Cashier('W004', false, false, 0.95),
 ];
 
 const CashierData: React.FC<PageChildrenProps> = ({ open, setOpen }) => {

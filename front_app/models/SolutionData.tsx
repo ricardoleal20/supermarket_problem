@@ -1,52 +1,42 @@
 // Cashier model, to receive data from it
 // and to manage easily the data
-import { GridColDef, GridRowId } from '@mui/x-data-grid';
+import { GridRowId } from '@mui/x-data-grid';
 // Icons
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import WatchOutlinedIcon from '@mui/icons-material/WatchOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
 // Local imports
-import { DataTableModel } from "../components/DataTable"
+import { DataTableModel, FieldsInfo } from "../components/DataTable"
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 
-function arrivalTimeToDate(arrivalTime: number): string {
-    const baseHour = 8;
-    // Get the hours and minutes
-    const hours = baseHour + Math.floor(arrivalTime / 60);
-    const minutes = arrivalTime % 60;
-    // Modify the final parameters
-    const timeOfDay = hours < 12 ? "AM" : "PM";
-    const hoursString = hours < 13 ? `${hours}` : `${hours - baseHour}`;
-    const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    // Get the last hour
-    return `${hoursString}:${minutesString} ${timeOfDay}`;
-}
+export default class CashierPerformance implements DataTableModel {
+    id: GridRowId;
+    workerId: string;
+    serviceLevel: number;
+    waitingTime: number;
+    processingTime: number;
+    freeTime: number;
 
-interface SolutionDataInterface {
-    /// This interface allow me to define what are I'm going to need
-    /// for this model
-    workerId: string,
-    serviceLevel: number,
-    waitingTime: number,
-    processingTime: number,
-    freeTime: number,
-}
-
-export default class CashierPerformance implements DataTableModel, SolutionDataInterface {
     /// This class is just the object to retrieve the data
     constructor(
-        public id: GridRowId,
-        public workerId: string,
-        public serviceLevel: number,
-        public waitingTime: number,
-        public processingTime: number,
-        public freeTime: number
-    ) { }
+        id: GridRowId,
+        workerId: string,
+        serviceLevel: number,
+        waitingTime: number,
+        processingTime: number,
+        freeTime: number
+    ) {
+        this.id = id;
+        this.workerId = workerId;
+        this.serviceLevel = serviceLevel;
+        this.waitingTime = waitingTime;
+        this.processingTime = processingTime;
+        this.freeTime = freeTime;
+    }
 
     // Method to return the columns from the model
-    private static getFieldsInformation(): GridColDef[] {
+    private static getFieldsInformation(): FieldsInfo[] {
         return [
             // Hide the ID column
             { field: "id", headerName: "ID" },

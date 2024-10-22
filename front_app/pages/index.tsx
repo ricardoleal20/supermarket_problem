@@ -20,7 +20,14 @@ const Home = () => {
             width="100%" // Just give the 100% to ensure the entire X length to be used in the animation
         >
             {/* Define the box for the information section */}
-            <Box paddingTop="8em" justifyContent="space-between" align="center">
+            <Box
+                paddingTop="8em"
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+            >
                 <Typography variant="h1" paddingBottom="0.5em">Optimized Flexible Supermarket Solution</Typography>
                 {/* Define the container */}
                 <TextBlock width="80%">
