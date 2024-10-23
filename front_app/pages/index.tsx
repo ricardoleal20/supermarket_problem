@@ -43,7 +43,7 @@ const Home = () => {
                         For more detailed information about this solution, check
                         the <Link
                             color={colors.greenAccent[500]}
-                            href="/interface/FAQ"
+                            href="/#/interface/FAQ"
                             underline="hover"
                             sx={{
                                 cursor: "pointer"
@@ -55,7 +55,7 @@ const Home = () => {
                 {/* Add the button that redirect us to the FAQ page*/}
                 <Button
                     variant="contained"
-                    href="/interface"
+                    href="/#/interface"
                     size="large"
                     startIcon={<LaunchIcon />}
                     sx={{

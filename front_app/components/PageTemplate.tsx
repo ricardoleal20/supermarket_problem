@@ -113,7 +113,7 @@ const SideBarElement: React.FC<SideBarElementProps> = ({ page, open, selected, r
     // Create the full page with the item desired. In this case, we'll use
     // 'interface' with the desired extension
 
-    const link = "http://localhost:5173/interface/" + refUrl
+    const link = "/#/interface/" + refUrl
 
     return (
         <ListItem key={page} disablePadding sx={{ display: 'block' }}>

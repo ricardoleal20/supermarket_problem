@@ -2,7 +2,7 @@
 import React from "react";
 // import { useState } from 'react'
 // Import react props //
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 // Import some materials utilities
 import { ThemeProvider, CssBaseline } from '@mui/material';
 // Include the snackbar from MUI
@@ -29,7 +29,7 @@ function App() {
       <div className="app">
         <SnackbarProvider />
         <main className="content">
-          <Router>
+          <Router basename="/">
             <Routes>
               {/* Route for the index page*/}
               <Route
