@@ -25,4 +25,4 @@ RUN poetry install --no-interaction --no-ansi --no-root
 COPY . /app/
 
 # Add the command to run
-CMD ["poetry", "run", "python", "-m", "supermarket_implementation"]
+CMD ["poetry", "run", "python", "-m", "supermarket_implementation", "--host", "0.0.0.0", "--port", "8000"]

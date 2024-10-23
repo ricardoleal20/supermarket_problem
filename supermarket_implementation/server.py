@@ -24,8 +24,8 @@ class Server:
 
     def __init__(self,  # pylint: disable=R0913
                  app: FastAPI,
-                 host: str = os.getenv("HOST", "localhost"),
-                 port: int = int(os.getenv("PORT", 3000)),
+                 host: str = "localhost",
+                 port: int = 3000,
                  log_level: str = os.getenv("LOG_LEVEL", "info"),
                  reload: bool = False
                  ) -> None:
@@ -69,14 +69,18 @@ async def keep_running() -> None:
         print("Server keep running...")
 
 
-def run_server(api_to_run: Any) -> None:
+def run_server(
+    api_to_run: Any,
+    host: str = "localhost",
+    port: int = 3000,
+) -> None:
     """
     Run the server.
     Args:
         api_to_run (Any): The FastAPI app class to run.
     """
     # Create server instance
-    server = Server(app=api_to_run)
+    server = Server(app=api_to_run, host=host, port=port)
     loop = asyncio.get_event_loop()
 
     # Register shutdown handlers for production
