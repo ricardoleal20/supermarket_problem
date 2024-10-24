@@ -1,0 +1,36 @@
+name: Build backend and deploy 🚀
+
+on:
+  push:
+    tags:  
+      - '**'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🔍
+        uses: actions/checkout@v2
+
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies 📦
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi
+
+      # - name: Run tests 🧪
+      #   run: poetry run pytest
+
+      - name: Install Railway 🚅
+        run: npm i -g @railway/cli
+
+      - name: Deploy to Railway 🚀
+        run: railway up
+        env:
+          RAILWAY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
