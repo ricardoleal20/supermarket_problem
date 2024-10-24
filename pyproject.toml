@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "supermarket-problem"
-version = "0.1.0"
+version = "0.1.1"
 description = "Solve a SuperMarket allocation problem using a MIL solver"
 authors = ["ricardoleal20 <rick.leal420@gmail.com>"]
 license = "MIT"

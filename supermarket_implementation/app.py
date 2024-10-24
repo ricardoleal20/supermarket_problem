@@ -114,8 +114,9 @@ class App():  # pylint: disable=R0903
     # -------------------- #
     async def __default(self) -> dict:
         return {
-            "message": "This is the default page for the API." +
-            " To see more options, please go to `/docs`"
+            "message": "The backend for the supermarket is running." +
+            " To see more options, please go to `/docs`",
+            "serverRunning": True
         }
 
     # -------------------- #

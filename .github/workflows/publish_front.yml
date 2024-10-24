@@ -2,8 +2,9 @@ name: Build website and deploy 🚀
 
 on:
   push:
-    branches:  
-      - main
+    tags:  
+      - '**'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 permissions:
   contents: read
@@ -29,7 +30,7 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Run install 📦
+      - name: Install dependencies 📦
         uses: borales/actions-yarn@v4
         with:
           cmd: install # will run `yarn install` command
