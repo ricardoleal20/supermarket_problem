@@ -1,7 +1,7 @@
 {
   "name": "supermarket_problem",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.1",
   "homepage": "https://supermarket-opt.ricardoleal20.dev/",
   "scripts": {
     "predeploy": "npm run build",
