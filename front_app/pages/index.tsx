@@ -1,6 +1,7 @@
 /// Index Page. This is the page that would redirect it to the others
 /// `project` page.
-import { Box, Typography, Button, Link } from "@mui/material";
+// Import MUI materials
+import { Box, Typography, Button, Link, } from "@mui/material";
 // Icon imports
 import LaunchIcon from '@mui/icons-material/Launch';
 // Local imports
