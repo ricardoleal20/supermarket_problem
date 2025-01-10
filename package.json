@@ -1,7 +1,7 @@
 {
   "name": "supermarket_problem",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://supermarket-opt.ricardoleal20.dev/",
   "scripts": {
     "predeploy": "npm run build",
@@ -32,6 +32,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@eslint/plugin-kit": "^0.2.3",
+    "cross-spawn": "^7.0.5",
+    "nanoid": "^3.3.8",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

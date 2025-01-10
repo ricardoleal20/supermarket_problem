@@ -488,6 +488,13 @@
   dependencies:
     levn "^0.4.1"
 
+"@eslint/plugin-kit@^0.2.3":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@eslint/plugin-kit/-/plugin-kit-0.2.4.tgz#2b78e7bb3755784bb13faa8932a1d994d6537792"
+  integrity sha512-zSkKow6H5Kdm0ZUQUB2kV5JIXqoG0+uH5YADhaEHswm664N9Db8dXSi0nMJpacpMf+MyyglF1vnZohpEg5yUtg==
+  dependencies:
+    levn "^0.4.1"
+
 "@floating-ui/core@^1.6.0":
   version "1.6.8"
   resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.6.8.tgz#aa43561be075815879305965020f492cdb43da12"
@@ -1493,6 +1500,15 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
+cross-spawn@^7.0.5:
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
+  integrity sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==
+  dependencies:
+    path-key "^3.1.0"
+    shebang-command "^2.0.0"
+    which "^2.0.1"
+
 cssesc@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/cssesc/-/cssesc-3.0.0.tgz#37741919903b868565e1c09ea747445cd18983ee"
@@ -2383,6 +2399,11 @@ nanoid@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
   integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
+
+nanoid@^3.3.8:
+  version "3.3.8"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.8.tgz#b1be3030bee36aaff18bacb375e5cce521684baf"
+  integrity sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==
 
 natural-compare@^1.4.0:
   version "1.4.0"
