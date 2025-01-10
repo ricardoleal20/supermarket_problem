@@ -1,6 +1,7 @@
 """
 Provide a Base API to use on the server handler
 """
+import os
 from typing_extensions import TypedDict
 from fastapi import FastAPI, HTTPException
 # Import also the CORSMiddleware
@@ -92,9 +93,11 @@ class App():  # pylint: disable=R0903
 
     def allow_cors_middleware(self) -> None:
         """Allow the cors middleware config"""
+        origin = os.environ.get("FRONT_ORIGIN", "*")
+        print(f"Accepting calls from origin: {origin}")
         self._app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=[origin],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"]
