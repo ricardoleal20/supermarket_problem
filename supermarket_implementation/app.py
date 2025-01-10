@@ -93,11 +93,13 @@ class App():  # pylint: disable=R0903
 
     def allow_cors_middleware(self) -> None:
         """Allow the cors middleware config"""
-        origin = os.environ.get("FRONT_ORIGIN", "*")
+        origin = os.environ.get("FRONT_ORIGIN", "localhost")
         print(f"Accepting calls from origin: {origin}")
         self._app.add_middleware(
             CORSMiddleware,
-            allow_origins=[origin],
+            allow_origins=[
+                origin, f"{origin.rstrip('/')}/*"
+            ],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"]
